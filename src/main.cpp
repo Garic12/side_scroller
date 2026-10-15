@@ -1,8 +1,6 @@
 #include <fstream>
-#include <iostream>
 #include <nlohmann/json.hpp>
 #include <raylib.h>
-#include <typeinfo>
 
 using json = nlohmann::json;
 
@@ -23,6 +21,9 @@ struct Level {
         Vector2 world_size;
         int num_tiles;
         Tile *tiles;
+        std::vector<int> collision_grid;
+        int collision_width;
+        int collision_height;
         std::string tileset;
 };
 
@@ -67,6 +68,7 @@ int main() {
             player.pos.y =
                 layer["entityInstances"][0]["__grid"][1].get<int>() * TILESIZE;
         } else if (layer["__type"] == "IntGrid") {
+            // Scan in tile information
             level.tileset =
                 "ressources/" + layer["__tilesetRelPath"].get<std::string>();
             Image image = LoadImage(level.tileset.c_str());
@@ -82,33 +84,42 @@ int main() {
                 level.tiles[i].src_pos = {tile["src"][0], tile["src"][1]};
                 i++;
             }
+
+            // Build collision grid
+            int width = layer["__cWid"];
+            int height = layer["__cHei"];
+            level.collision_width = layer["__cWid"];
+            level.collision_height = layer["__cHei"];
+
+            level.collision_grid.resize(width * height);
+
+            for (int i = 0; i < width * height; i++) {
+                level.collision_grid[i] = layer["intGridCsv"][i];
+            }
         }
     }
 
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
 
-        float dx;
+        float dx = 0;
         if (IsKeyDown(KEY_A)) {
             dx = -player.speed * dt;
         } else if (IsKeyDown(KEY_D)) {
             dx = player.speed * dt;
         }
 
-        /* This is not needed for now, work on parsing the map json first
         // Horizontal movement and collision
         if (dx != 0) {
             player.pos.x += dx;
         }
 
-        // Vertical movement
         player.vel.y += GRAVITY * dt;
         if (player.grounded && IsKeyPressed(KEY_SPACE)) {
             player.vel.y = -JUMP_SPEED;
         }
         player.pos.y += player.vel.y * dt;
 
-        */
         cam.target = player.pos;
 
         BeginDrawing();
@@ -140,6 +151,9 @@ int main() {
     CloseWindow();
 
     delete level.tiles;
+
+    // Cleanup collision grid
+    level.collision_grid.clear();
 
     UnloadTexture(texture);
     return 1;
