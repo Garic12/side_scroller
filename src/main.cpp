@@ -8,15 +8,23 @@
 using json = nlohmann::json;
 
 struct Player {
+        float gravity;
+        float fall_gravity;
+        float jump_speed;
+        float walk_speed;
+
         Vector2 pos;
         Vector2 vel;
-        float speed;
         bool grounded;
 };
 
 struct Tile {
         Vector2 world_pos;
         Vector2 src_pos;
+};
+
+struct TileBounds {
+        int left, right, top, bottom;
 };
 
 struct Level {
@@ -35,8 +43,14 @@ int screenWidth = 800;
 int screenHeight = 450;
 
 float TILESIZE = 32.0f;
-float GRAVITY = 270;
-float JUMP_SPEED = 100;
+
+TileBounds GetTileBounds(Vector2 pos) {
+    // Returns surrounding tiles in gridspace
+    return {(int)floor(pos.x / TILESIZE),
+            (int)floor((pos.x + TILESIZE - 0.01f) / TILESIZE),
+            (int)floor(pos.y / TILESIZE),
+            (int)floor((pos.y + TILESIZE - 0.01f) / TILESIZE)};
+}
 
 int main() {
     InitWindow(screenWidth, screenHeight, "Sidescroller");
@@ -44,8 +58,11 @@ int main() {
 
     Player player;
     player.pos = {0, 0};
-    player.speed = 140;
     player.grounded = true;
+    player.walk_speed = 140;
+    player.gravity = 500;
+    player.fall_gravity = player.gravity * 1.5;
+    player.jump_speed = 200;
 
     // Parse map information
     std::ifstream i("ressources/main.ldtk");
@@ -97,6 +114,7 @@ int main() {
         }
     }
 
+    // Create camera and camera movement related information
     Camera2D cam = {.offset = {screenWidth / 2.0f, screenHeight / 2.0f},
                     .target = player.pos,
                     .rotation = 0.0,
@@ -112,25 +130,20 @@ int main() {
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
 
+        // Horizontal movement and collision
         float dx = 0.0f;
         if (IsKeyDown(KEY_A)) {
-            dx = -player.speed * dt;
+            dx = -player.walk_speed * dt;
         } else if (IsKeyDown(KEY_D)) {
-            dx = player.speed * dt;
+            dx = player.walk_speed * dt;
         }
 
-        // Horizontal movement and collision
         if (dx != 0) {
             player.pos.x += dx;
-            int left = (int)floor(player.pos.x / TILESIZE);
-            int right =
-                (int)floor((player.pos.x + TILESIZE - 0.01f) / TILESIZE);
-            int top = (int)floor(player.pos.y / TILESIZE);
-            int bottom =
-                (int)floor((player.pos.y + TILESIZE - 0.01f) / TILESIZE);
+            TileBounds bounds = GetTileBounds(player.pos);
 
-            for (int y = top; y <= bottom; ++y) {
-                for (int x = left; x <= right; ++x) {
+            for (int y = bounds.top; y <= bounds.bottom; ++y) {
+                for (int x = bounds.left; x <= bounds.right; ++x) {
                     if (x < 0 || y < 0 || x >= level.collision_width ||
                         y >= level.collision_height ||
                         level.collision_grid[y * level.collision_width + x] !=
@@ -145,25 +158,24 @@ int main() {
             }
         }
 
-        player.vel.y += GRAVITY * dt;
+        // Vertical movement and collision
+        if (player.vel.y >= 0) {
+            player.vel.y += player.fall_gravity * dt;
+        } else {
+            player.vel.y += player.gravity * dt;
+        }
         if (IsKeyPressed(KEY_SPACE)) {
-            player.vel.y = -JUMP_SPEED;
+            player.vel.y = -player.jump_speed;
             player.grounded = false;
         }
 
         float dy = player.vel.y * dt;
-        // Vertical movement and collision
         if (dy != 0) {
             player.pos.y += dy;
-            int left = (int)floor(player.pos.x / TILESIZE);
-            int right =
-                (int)floor((player.pos.x + TILESIZE - 0.01f) / TILESIZE);
-            int top = (int)floor(player.pos.y / TILESIZE);
-            int bottom =
-                (int)floor((player.pos.y + TILESIZE - 0.01f) / TILESIZE);
+            TileBounds bounds = GetTileBounds(player.pos);
 
-            for (int y = top; y <= bottom; ++y) {
-                for (int x = left; x <= right; ++x) {
+            for (int y = bounds.top; y <= bounds.bottom; ++y) {
+                for (int x = bounds.left; x <= bounds.right; ++x) {
                     if (x < 0 || y < 0 || x >= level.collision_width ||
                         y >= level.collision_height ||
                         level.collision_grid[y * level.collision_width + x] !=
@@ -179,8 +191,7 @@ int main() {
             }
         }
 
-        // Move Camera
-
+        // Move and Clamp Camera
         cam.target.x =
             Clamp(player.pos.x + TILESIZE / 2.0f, level_left + half_view_x,
                   level_right - half_view_x);
