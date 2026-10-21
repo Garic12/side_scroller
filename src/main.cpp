@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -8,14 +9,14 @@
 using json = nlohmann::json;
 
 struct Player {
-        float gravity;
-        float fall_gravity;
-        float jump_speed;
-        float walk_speed;
+        float gravity = 250;
+        float fall_gravity = 325;
+        float jump_speed = 80.0f;
+        float walk_speed = 35.0f;
 
-        Vector2 pos;
-        Vector2 vel;
-        bool grounded;
+        Vector2 pos = {0, 0};
+        Vector2 vel = {0, 0};
+        bool grounded = true;
 };
 
 struct Tile {
@@ -28,21 +29,21 @@ struct TileBounds {
 };
 
 struct Level {
-        Vector2 world_pos;
-        Vector2 world_size;
-        int num_tiles;
-        Tile *tiles;
-        std::vector<int> collision_grid;
-        int collision_width;
-        int collision_height;
-        std::string tileset;
+        Vector2 world_pos = {0, 0};
+        Vector2 world_size = {0, 0};
+        int num_tiles = 0;
+        std::vector<Tile> tiles = {};
+        std::vector<int> collision_grid = {};
+        int collision_width = 0;
+        int collision_height = 0;
+        std::string tileset = "";
 };
 
 // Global values
 int screenWidth = 800;
 int screenHeight = 450;
 
-float TILESIZE = 32.0f;
+float TILESIZE = 8.0f;
 
 TileBounds GetTileBounds(Vector2 pos) {
     // Returns surrounding tiles in gridspace
@@ -57,15 +58,12 @@ int main() {
     SetTargetFPS(30);
 
     Player player;
-    player.pos = {0, 0};
-    player.grounded = true;
-    player.walk_speed = 140;
-    player.gravity = 500;
-    player.fall_gravity = player.gravity * 1.5;
-    player.jump_speed = 200;
-
     // Parse map information
     std::ifstream i("ressources/main.ldtk");
+    if (!i) {
+        std::cerr << "Could not open main.ldtk\n";
+        return 1;
+    }
     json ldtk = json::parse(i);
 
     // Feed the map information into our own structures
@@ -77,34 +75,46 @@ int main() {
     level.world_size = {map["pxWid"], map["pxHei"]};
 
     for (const auto &layer : map["layerInstances"]) {
-        if (layer["__type"] == "Entities") {
+        std::string type = layer["__type"].get<std::string>();
+        if (type == "Entities") {
             player.pos.x =
                 layer["entityInstances"][0]["__grid"][0].get<int>() * TILESIZE;
             player.pos.y =
                 layer["entityInstances"][0]["__grid"][1].get<int>() * TILESIZE;
-        } else if (layer["__type"] == "IntGrid") {
+        } else if (type == "Tiles") {
             // Scan in tile information
             level.tileset =
                 "ressources/" + layer["__tilesetRelPath"].get<std::string>();
             Image image = LoadImage(level.tileset.c_str());
+            if (image.data == nullptr) {
+                std::cerr << "Failed to load tileset: " << level.tileset
+                          << "\n";
+            }
             texture = LoadTextureFromImage(image);
+            UnloadImage(image);
 
-            int num_tiles = layer["autoLayerTiles"].size();
+            if (texture.id == 0) {
+                std::cerr << "Failed to create texture\n";
+                return 1;
+            }
+
+            const auto &tiles = layer["gridTiles"];
+            int num_tiles = tiles.size();
             level.num_tiles = num_tiles;
-            level.tiles = new Tile[num_tiles];
+            level.tiles.resize(num_tiles);
 
             int i = 0;
-            for (const auto &tile : layer["autoLayerTiles"]) {
+            for (const auto &tile : tiles) {
                 level.tiles[i].world_pos = {tile["px"][0], tile["px"][1]};
                 level.tiles[i].src_pos = {tile["src"][0], tile["src"][1]};
                 i++;
             }
-
+        } else if (type == "IntGrid") {
             // Build collision grid
             int width = layer["__cWid"];
             int height = layer["__cHei"];
-            level.collision_width = layer["__cWid"];
-            level.collision_height = layer["__cHei"];
+            level.collision_width = width;
+            level.collision_height = height;
 
             level.collision_grid.resize(width * height);
 
@@ -114,11 +124,13 @@ int main() {
         }
     }
 
+    assert(level.tiles.size() > 0);
+
     // Create camera and camera movement related information
     Camera2D cam = {.offset = {screenWidth / 2.0f, screenHeight / 2.0f},
                     .target = player.pos,
                     .rotation = 0.0,
-                    .zoom = 1.5f};
+                    .zoom = 5.0f};
     float half_view_x = screenWidth / (2.0f * cam.zoom);
     float half_view_y = screenHeight / (2.0f * cam.zoom);
 
@@ -200,27 +212,30 @@ int main() {
                   level_bottom - half_view_y);
 
         BeginDrawing();
-        ClearBackground(BLUE);
+        ClearBackground({40, 40, 46});
         BeginMode2D(cam);
         // Draw Map
         for (int i = 0; i < level.num_tiles; ++i) {
             Tile tile = level.tiles[i];
-            // std::cout << "Tile " << i << ": px:" << tile.src_pos.x << ", "
-            //           << tile.src_pos.y << std::endl;
             Rectangle src = {.x = tile.src_pos.x,
                              .y = tile.src_pos.y,
-                             .width = 32,
-                             .height = 32};
+                             .width = TILESIZE,
+                             .height = TILESIZE};
             Rectangle dest = {.x = tile.world_pos.x,
                               .y = tile.world_pos.y,
-                              .width = 32,
-                              .height = 32};
+                              .width = TILESIZE,
+                              .height = TILESIZE};
             DrawTexturePro(texture, src, dest, level.world_pos, 0.0f, WHITE);
         }
 
         // Draw Player
-        DrawRectangleRec(Rectangle{player.pos.x, player.pos.y, 32.0f, 32.0f},
-                         BLACK);
+        Rectangle src = {.x = 0, .y = 0, .width = TILESIZE, .height = TILESIZE};
+        Rectangle dest = {.x = player.pos.x,
+                          .y = player.pos.y,
+                          .width = TILESIZE,
+                          .height = TILESIZE};
+
+        DrawTexturePro(texture, src, dest, level.world_pos, 0.0f, WHITE);
         EndMode2D();
         DrawText(TextFormat("X: %d | Y: %d",
                             (int)floor(player.pos.x / TILESIZE),
@@ -230,7 +245,7 @@ int main() {
     }
     CloseWindow();
 
-    delete level.tiles;
+    level.tiles.clear();
 
     // Cleanup collision grid
     level.collision_grid.clear();
