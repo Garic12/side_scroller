@@ -6,6 +6,12 @@
 
 using json = nlohmann::json;
 
+// Constants
+constexpr int screenWidth = 1000;
+constexpr int screenHeight = 600;
+constexpr float TILESIZE = 8.0f;
+
+// Game Data
 struct Player {
         float gravity = 250;
         float fall_gravity = 325;
@@ -35,7 +41,6 @@ struct TileBounds {
 struct Level {
         Vector2 world_pos = {0, 0};
         Vector2 world_size = {0, 0};
-        int num_tiles = 0;
         std::vector<Tile> tiles = {};
         std::vector<int> collision_grid = {};
         int collision_width = 0;
@@ -43,12 +48,7 @@ struct Level {
         std::string tileset = "";
 };
 
-// Global values
-int screenWidth = 1000;
-int screenHeight = 600;
-
-float TILESIZE = 8.0f;
-
+// Helper functions
 TileBounds GetTileBounds(Vector2 pos) {
     // Returns surrounding tiles in gridspace
     return {(int)floor(pos.x / TILESIZE),
@@ -62,6 +62,9 @@ int main() {
     SetTargetFPS(60);
 
     Player player;
+    Level level;
+    Texture2D texture;
+
     // Parse map information
     std::ifstream i("ressources/main.ldtk");
     if (!i) {
@@ -70,25 +73,21 @@ int main() {
     }
     json ldtk = json::parse(i);
 
-    // Feed the map information into our own structures
-    Level level;
-    Texture2D texture;
-
     const auto map = ldtk["levels"][0];
-    level.world_pos = {map["worldX"], map["worldY"]};
-    level.world_size = {map["pxWid"], map["pxHei"]};
+    level.world_pos = {map["worldX"].get<float>(), map["worldY"].get<float>()};
+    level.world_size = {map["pxWid"].get<float>(), map["pxHei"].get<float>()};
 
     for (const auto &layer : map["layerInstances"]) {
-        std::string type = layer["__type"].get<std::string>();
+        const std::string type = layer["__type"].get<std::string>();
+
         if (type == "Entities") {
-            player.pos.x =
-                layer["entityInstances"][0]["__grid"][0].get<int>() * TILESIZE;
-            player.pos.y =
-                layer["entityInstances"][0]["__grid"][1].get<int>() * TILESIZE;
+            const auto &grid_pos = layer["entityInstances"][0]["__grid"];
+            player.pos.x = grid_pos[0].get<int>() * TILESIZE;
+            player.pos.y = grid_pos[1].get<int>() * TILESIZE;
         } else if (type == "Tiles") {
-            // Scan in tile information
             level.tileset =
                 "ressources/" + layer["__tilesetRelPath"].get<std::string>();
+
             Image image = LoadImage(level.tileset.c_str());
             if (image.data == nullptr) {
                 std::cerr << "Failed to load tileset: " << level.tileset
@@ -102,13 +101,11 @@ int main() {
                 return 1;
             }
 
-            const auto &tiles = layer["gridTiles"];
-            int num_tiles = tiles.size();
-            level.num_tiles = num_tiles;
-            level.tiles.resize(num_tiles);
+            const auto &grid_tiles = layer["gridTiles"];
+            level.tiles.resize(grid_tiles.size());
 
             int i = 0;
-            for (const auto &tile : tiles) {
+            for (const auto &tile : grid_tiles) {
                 level.tiles[i].world_pos = {tile["px"][0], tile["px"][1]};
                 level.tiles[i].src_pos = {tile["src"][0], tile["src"][1]};
                 i++;
@@ -130,18 +127,19 @@ int main() {
 
     assert(level.tiles.size() > 0);
 
-    // Create camera and camera movement related information
     Camera2D cam = {.offset = {screenWidth / 2.0f, screenHeight / 2.0f},
                     .target = player.pos,
                     .rotation = 0.0,
                     .zoom = 5.0f};
-    float half_view_x = screenWidth / (2.0f * cam.zoom);
-    float half_view_y = screenHeight / (2.0f * cam.zoom);
+    const float half_view_x = screenWidth / (2.0f * cam.zoom);
+    const float half_view_y = screenHeight / (2.0f * cam.zoom);
 
-    float level_left = level.world_pos.x;
-    float level_right = level.world_pos.x + level.collision_width * TILESIZE;
-    float level_top = level.world_pos.y;
-    float level_bottom = level.world_pos.y + level.collision_height * TILESIZE;
+    const float level_left = level.world_pos.x;
+    const float level_right =
+        level.world_pos.x + level.collision_width * TILESIZE;
+    const float level_top = level.world_pos.y;
+    const float level_bottom =
+        level.world_pos.y + level.collision_height * TILESIZE;
 
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
@@ -246,7 +244,7 @@ int main() {
         ClearBackground({40, 40, 46});
         BeginMode2D(cam);
         // Draw Map
-        for (int i = 0; i < level.num_tiles; ++i) {
+        for (int i = 0; i < level.tiles.size(); ++i) {
             Tile tile = level.tiles[i];
             Rectangle src = {.x = tile.src_pos.x,
                              .y = tile.src_pos.y,
