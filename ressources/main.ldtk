@@ -43,7 +43,7 @@
 	"defs": { "layers": [
 		{
 			"__type": "IntGrid",
-			"identifier": "Collision",
+			"identifier": "Map_Information",
 			"type": "IntGrid",
 			"uid": 117,
 			"doc": null,
@@ -67,7 +67,10 @@
 			"autoTilesKilledByOtherLayerUid": null,
 			"uiFilterTags": [],
 			"useAsyncRender": false,
-			"intGridValues": [{ "value": 1, "identifier": null, "color": "#63C74D", "tile": null, "groupUid": 0 }],
+			"intGridValues": [
+				{ "value": 1, "identifier": "Collision", "color": "#63C74D", "tile": null, "groupUid": 0 },
+				{ "value": 2, "identifier": "Coins", "color": "#FEE761", "tile": null, "groupUid": 0 }
+			],
 			"intGridValuesGroups": [],
 			"autoRuleGroups": [],
 			"autoSourceLayerDefUid": null,
@@ -202,7 +205,7 @@
 			"savedSelections": [],
 			"cachedPixelData": {
 				"opaqueTiles": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-				"averageColors": "5acd5acd5acd5acd0000bfffcfffbfff9fff00005f885f885f885f880000afff8fffafff8fff00005acd5acd5acd5acd0000bfffbfffbfff9fff00005f885f885f885f880000afffafffafffafff00005acd4acd4acd1acd0000bfff8fff5fff1fff00005f883f882f880f8800009fff6fff6fff3fff00005acd5acd5acd5acd0000bfffafffafffbfff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005fff00001fff1fff0fff1fff00004fff2fff00007da89da800003fff00003fff3fff4fff3fff0000000000000000000000000000000000000000000000000000000000000000000000000000000000006fff00001fff1fff2fff2fff00006dcb00002da82da82da800009fff00003fff00009fff5fff0000000000000000000000000000000000000000000000000000000000000000000000000000000000002bdd2bdd2bdd2bdd2bdd2bdd2bdd9dcb7dcb9dcb00004dcb7dcb4dcb00005bdd5bdd4bdd5bdd00002bdd2bdd2bdd2bdd2bdd2bdd2bdd7dcb00007dcb00007dcb00007dcb00004bdd4bdd5bdd5bdd00002bdd2bdd2bdd2bdd2bdd2bdd2bdd9dcb7dcb9dcb00004dcb7dcb4dcb00005bdd5bdd5bdd4bdd00002bdd2bdd2bdd3bdd2bdd2bdd2bdd"
+				"averageColors": "5acd5acd5acd5acd0000bfffcfffbfff9fff00005f885f885f885f880000aaad8aadaaad8aad00005acd5acd5acd5acd0000bfffbfffbfff9fff00005f885f885f885f880000aaadaaadaaadaaad00005acd4acd4acd1acd0000bfff8fff5fff1fff00005f883f882f880f8800009aad6aad6aad3aad00005acd5acd5acd5acd0000bfffafffafffbfff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005ae900001aad1aad0aad1aad00004bdd2bdd00007da89da800003ff900003ff93ff94ff93ff90000000000000000000000000000000000000000000000000000000000000000000000000000000000006fff00001fff1fff2fff2fff00006dcb00002da82da82da800009da800003fff00009da85da80000000000000000000000000000000000000000000000000000000000000000000000000000000000002bdd2bdd2bdd2bdd2bdd2bdd2bdd9dcb7dcb9dcb00004dcb7dcb4dcb00005bdd5bdd4bdd5bdd00002bdd2bdd2bdd2bdd2bdd2bdd2bdd7dcb00007dcb00007dcb00007dcb00004bdd4bdd5bdd5bdd00002bdd2bdd2bdd2bdd2bdd2bdd2bdd9dcb7dcb9dcb00004dcb7dcb4dcb00005bdd5bdd5bdd4bdd00002bdd2bdd2bdd3bdd2bdd2bdd2bdd"
 			}
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
@@ -229,7 +232,7 @@
 			"fieldInstances": [],
 			"layerInstances": [
 				{
-					"__identifier": "Collision",
+					"__identifier": "Map_Information",
 					"__type": "IntGrid",
 					"__cWid": 28,
 					"__cHei": 20,
@@ -256,7 +259,7 @@
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,
-						1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,
+						1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,2,1,1,1,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,

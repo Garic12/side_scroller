@@ -1,5 +1,3 @@
-#include <algorithm>
-#include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -12,11 +10,17 @@ struct Player {
         float gravity = 250;
         float fall_gravity = 325;
         float jump_speed = 80.0f;
+        float jump_power = 80.f;
         float walk_speed = 35.0f;
 
         Vector2 pos = {0, 0};
         Vector2 vel = {0, 0};
+
         bool grounded = true;
+        bool touches_wall = false;
+
+        float wall_coyote_timer = 0.0f;
+        float wall_coyote_time = 0.1f;
 };
 
 struct Tile {
@@ -40,8 +44,8 @@ struct Level {
 };
 
 // Global values
-int screenWidth = 800;
-int screenHeight = 450;
+int screenWidth = 1000;
+int screenHeight = 600;
 
 float TILESIZE = 8.0f;
 
@@ -55,7 +59,7 @@ TileBounds GetTileBounds(Vector2 pos) {
 
 int main() {
     InitWindow(screenWidth, screenHeight, "Sidescroller");
-    SetTargetFPS(30);
+    SetTargetFPS(60);
 
     Player player;
     // Parse map information
@@ -150,16 +154,23 @@ int main() {
             dx = player.walk_speed * dt;
         }
 
+        player.touches_wall = false;
+
         if (dx != 0) {
             player.pos.x += dx;
             TileBounds bounds = GetTileBounds(player.pos);
 
             for (int y = bounds.top; y <= bounds.bottom; ++y) {
                 for (int x = bounds.left; x <= bounds.right; ++x) {
-                    if (x < 0 || y < 0 || x >= level.collision_width ||
-                        y >= level.collision_height ||
-                        level.collision_grid[y * level.collision_width + x] !=
-                            0) {
+                    // Check grid bounds
+                    if (x < 0 || x >= level.collision_width || y < 0 ||
+                        y >= level.collision_height) {
+                        continue;
+                    }
+
+                    if (level.collision_grid[y * level.collision_width + x] ==
+                        1) {
+                        player.touches_wall = true;
                         if (dx > 0) {
                             player.pos.x = x * TILESIZE - TILESIZE;
                         } else if (dx < 0) {
@@ -170,6 +181,14 @@ int main() {
             }
         }
 
+        if (player.touches_wall) {
+            player.wall_coyote_timer = player.wall_coyote_time;
+        } else {
+            if (player.wall_coyote_timer > 0.0f) {
+                player.wall_coyote_timer -= dt;
+            }
+        }
+
         // Vertical movement and collision
         if (player.vel.y >= 0) {
             player.vel.y += player.fall_gravity * dt;
@@ -177,8 +196,14 @@ int main() {
             player.vel.y += player.gravity * dt;
         }
         if (IsKeyPressed(KEY_SPACE)) {
-            player.vel.y = -player.jump_speed;
-            player.grounded = false;
+            if (player.grounded) {
+                player.vel.y = -player.jump_power;
+                player.grounded = false;
+            } else if ((player.touches_wall ||
+                        player.wall_coyote_timer > 0.0f)) {
+                player.vel.y = -player.jump_power;
+            }
+            player.jump_power = Lerp(player.jump_power, 0.0f, 0.15f);
         }
 
         float dy = player.vel.y * dt;
@@ -188,12 +213,18 @@ int main() {
 
             for (int y = bounds.top; y <= bounds.bottom; ++y) {
                 for (int x = bounds.left; x <= bounds.right; ++x) {
-                    if (x < 0 || y < 0 || x >= level.collision_width ||
-                        y >= level.collision_height ||
-                        level.collision_grid[y * level.collision_width + x] !=
-                            0) {
+                    // Check grid bounds
+                    if (x < 0 || x >= level.collision_width || y < 0 ||
+                        y >= level.collision_height) {
+                        continue;
+                    }
+
+                    if (level.collision_grid[y * level.collision_width + x] ==
+                        1) {
                         if (dy > 0) {
                             player.pos.y = y * TILESIZE - TILESIZE;
+                            player.grounded = true;
+                            player.jump_power = player.jump_speed;
                         } else if (dy < 0) {
                             player.pos.y = (y + 1) * TILESIZE;
                         }
