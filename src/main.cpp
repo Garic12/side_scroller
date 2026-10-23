@@ -13,20 +13,24 @@ constexpr float TILESIZE = 8.0f;
 
 // Game Data
 struct Player {
-        float gravity = 250;
-        float fall_gravity = 325;
-        float jump_speed = 80.0f;
-        float jump_power = 80.f;
-        float walk_speed = 35.0f;
+        float jump_height;
+        float jump_time_to_peak;
+        float jump_time_to_fall;
 
-        Vector2 pos = {0, 0};
-        Vector2 vel = {0, 0};
+        float jump_velocity;
+        float jump_gravity;
+        float fall_gravity;
+
+        float walk_speed;
+
+        Vector2 pos = {0.0f, 0.0f};
+        Vector2 vel = {0.0f, 0.0f};
 
         bool grounded = true;
-        bool touches_wall = false;
+        bool touches_wall;
 
-        float wall_coyote_timer = 0.0f;
-        float wall_coyote_time = 0.1f;
+        float wall_coyote_timer;
+        float wall_coyote_time;
 };
 
 struct Tile {
@@ -47,6 +51,28 @@ struct Level {
         int collision_height = 0;
         std::string tileset = "";
 };
+
+int SetupPlayer(Player *player) {
+    player->jump_height = 18.0f;
+    player->jump_time_to_peak = 0.35f;
+    player->jump_time_to_fall = 0.25f;
+
+    player->jump_velocity =
+        (2.0f * player->jump_height) / player->jump_time_to_peak;
+    player->jump_gravity =
+        (-2.0f * player->jump_height) /
+        (player->jump_time_to_peak * player->jump_time_to_peak) * -1;
+    player->fall_gravity =
+        (-2.0f * player->jump_height) /
+        (player->jump_time_to_fall * player->jump_time_to_fall) * -1;
+
+    player->wall_coyote_time = 0.1f;
+    player->wall_coyote_timer = 0.0f;
+
+    player->walk_speed = 45.0f;
+
+    return 0;
+}
 
 int LoadLevel(Level *level, Texture2D *texture, Player *player) {
     // Parse map information
@@ -128,9 +154,13 @@ int main() {
     SetTargetFPS(60);
 
     Player player;
-    Texture2D texture;
-    Level level;
+    if (SetupPlayer(&player) != 0) {
+        CloseWindow();
+        return 1;
+    }
 
+    Level level;
+    Texture2D texture;
     if (LoadLevel(&level, &texture, &player) != 0) {
         CloseWindow();
         return 1;
@@ -200,17 +230,17 @@ int main() {
         if (player.vel.y >= 0) {
             player.vel.y += player.fall_gravity * dt;
         } else {
-            player.vel.y += player.gravity * dt;
+            player.vel.y += player.jump_gravity * dt;
         }
+
         if (IsKeyPressed(KEY_SPACE)) {
             if (player.grounded) {
-                player.vel.y = -player.jump_power;
+                player.vel.y = -player.jump_velocity;
                 player.grounded = false;
             } else if ((player.touches_wall ||
                         player.wall_coyote_timer > 0.0f)) {
-                player.vel.y = -player.jump_power;
+                player.vel.y = -player.jump_velocity;
             }
-            player.jump_power = Lerp(player.jump_power, 0.0f, 0.15f);
         }
 
         float dy = player.vel.y * dt;
@@ -230,7 +260,6 @@ int main() {
                         if (dy > 0) {
                             player.pos.y = y * TILESIZE - TILESIZE;
                             player.grounded = true;
-                            player.jump_power = player.jump_speed;
                         } else if (dy < 0) {
                             player.pos.y = (y + 1) * TILESIZE;
                         }
