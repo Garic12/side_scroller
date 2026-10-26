@@ -14,36 +14,7 @@
 	"nextUid": 127,
 	"identifierStyle": "Capitalize",
 	"toc": [
-		{
-			"identifier": "Coins",
-			"instances": [],
-			"instancesData": [
-				{ "iids": {
-					"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de",
-					"levelIid": "878b96e0-96d0-11f1-b53a-55a3fb7b6050",
-					"layerIid": "1362cb30-bde0-11f1-ac8d-2972b8a8fe99",
-					"entityIid": "3843ea90-bde0-11f1-bfac-a959f362a8f8"
-				}, "worldX": 32, "worldY": 64, "widPx": 8, "heiPx": 8, "fields" : {} },
-				{ "iids": {
-					"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de",
-					"levelIid": "878b96e0-96d0-11f1-b53a-55a3fb7b6050",
-					"layerIid": "1362cb30-bde0-11f1-ac8d-2972b8a8fe99",
-					"entityIid": "43b06a70-bde0-11f1-bfac-49c36419e644"
-				}, "worldX": 112, "worldY": 56, "widPx": 8, "heiPx": 8, "fields" : {} },
-				{ "iids": {
-					"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de",
-					"levelIid": "878b96e0-96d0-11f1-b53a-55a3fb7b6050",
-					"layerIid": "1362cb30-bde0-11f1-ac8d-2972b8a8fe99",
-					"entityIid": "44259a70-bde0-11f1-bfac-81102f93974e"
-				}, "worldX": 104, "worldY": 96, "widPx": 8, "heiPx": 8, "fields" : {} },
-				{ "iids": {
-					"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de",
-					"levelIid": "878b96e0-96d0-11f1-b53a-55a3fb7b6050",
-					"layerIid": "1362cb30-bde0-11f1-ac8d-2972b8a8fe99",
-					"entityIid": "44502ce0-bde0-11f1-bfac-ffbf9c719216"
-				}, "worldX": 112, "worldY": 96, "widPx": 8, "heiPx": 8, "fields" : {} }
-			]
-		},
+		{ "identifier": "Coins", "instances": [], "instancesData": [] },
 		{
 			"identifier": "Key",
 			"instances": [],
@@ -55,7 +26,7 @@
 			}, "worldX": 112, "worldY": 112, "widPx": 8, "heiPx": 8, "fields" : {} }]
 		},
 		{
-			"identifier": "Player_start",
+			"identifier": "PlayerStart",
 			"instances": [],
 			"instancesData": [
 				{ "iids": {
@@ -308,7 +279,7 @@
 			"fieldDefs": []
 		},
 		{
-			"identifier": "Player_start",
+			"identifier": "PlayerStart",
 			"uid": 101,
 			"tags": [],
 			"exportToToc": true,
@@ -523,7 +494,7 @@
 					"gridTiles": [],
 					"entityInstances": [
 						{
-							"__identifier": "Player_start",
+							"__identifier": "PlayerStart",
 							"__grid": [2,12],
 							"__pivot": [0,0],
 							"__tags": [],
@@ -536,70 +507,6 @@
 							"px": [16,96],
 							"fieldInstances": [],
 							"__worldX": 16,
-							"__worldY": 96
-						},
-						{
-							"__identifier": "Coins",
-							"__grid": [4,8],
-							"__pivot": [0,0],
-							"__tags": [],
-							"__tile": null,
-							"__smartColor": "#FEE761",
-							"iid": "3843ea90-bde0-11f1-bfac-a959f362a8f8",
-							"width": 8,
-							"height": 8,
-							"defUid": 118,
-							"px": [32,64],
-							"fieldInstances": [],
-							"__worldX": 32,
-							"__worldY": 64
-						},
-						{
-							"__identifier": "Coins",
-							"__grid": [14,7],
-							"__pivot": [0,0],
-							"__tags": [],
-							"__tile": null,
-							"__smartColor": "#FEE761",
-							"iid": "43b06a70-bde0-11f1-bfac-49c36419e644",
-							"width": 8,
-							"height": 8,
-							"defUid": 118,
-							"px": [112,56],
-							"fieldInstances": [],
-							"__worldX": 112,
-							"__worldY": 56
-						},
-						{
-							"__identifier": "Coins",
-							"__grid": [13,12],
-							"__pivot": [0,0],
-							"__tags": [],
-							"__tile": null,
-							"__smartColor": "#FEE761",
-							"iid": "44259a70-bde0-11f1-bfac-81102f93974e",
-							"width": 8,
-							"height": 8,
-							"defUid": 118,
-							"px": [104,96],
-							"fieldInstances": [],
-							"__worldX": 104,
-							"__worldY": 96
-						},
-						{
-							"__identifier": "Coins",
-							"__grid": [14,12],
-							"__pivot": [0,0],
-							"__tags": [],
-							"__tile": null,
-							"__smartColor": "#FEE761",
-							"iid": "44502ce0-bde0-11f1-bfac-ffbf9c719216",
-							"width": 8,
-							"height": 8,
-							"defUid": 118,
-							"px": [112,96],
-							"fieldInstances": [],
-							"__worldX": 112,
 							"__worldY": 96
 						},
 						{
@@ -777,7 +684,7 @@
 			"worldX": 192,
 			"worldY": 64,
 			"worldDepth": 0,
-			"pxWid": 64,
+			"pxWid": 192,
 			"pxHei": 96,
 			"__bgColor": "#696A79",
 			"bgColor": null,
@@ -794,7 +701,7 @@
 				{
 					"__identifier": "Map_Information",
 					"__type": "IntGrid",
-					"__cWid": 8,
+					"__cWid": 24,
 					"__cHei": 12,
 					"__gridSize": 8,
 					"__opacity": 1,
@@ -810,9 +717,15 @@
 					"visible": true,
 					"optionalRules": [],
 					"intGridCsv": [
-						0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,0,
-						0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
-						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0
 					],
 					"autoLayerTiles": [],
 					"seed": 499391,
@@ -823,7 +736,7 @@
 				{
 					"__identifier": "Information",
 					"__type": "Entities",
-					"__cWid": 8,
+					"__cWid": 24,
 					"__cHei": 12,
 					"__gridSize": 8,
 					"__opacity": 1,
@@ -869,7 +782,7 @@
 							"__worldY": 80
 						},
 						{
-							"__identifier": "Player_start",
+							"__identifier": "PlayerStart",
 							"__grid": [1,3],
 							"__pivot": [0,0],
 							"__tags": [],
@@ -889,7 +802,7 @@
 				{
 					"__identifier": "Ground",
 					"__type": "Tiles",
-					"__cWid": 8,
+					"__cWid": 24,
 					"__cHei": 12,
 					"__gridSize": 8,
 					"__opacity": 1,
@@ -909,21 +822,21 @@
 					"seed": 8231692,
 					"overrideTilesetUid": null,
 					"gridTiles": [
-						{ "px": [0,8], "src": [8,88], "f": 0, "t": 221, "d": [8], "a": 1 },
-						{ "px": [8,8], "src": [8,88], "f": 0, "t": 221, "d": [9], "a": 1 },
-						{ "px": [16,8], "src": [8,88], "f": 0, "t": 221, "d": [10], "a": 1 },
-						{ "px": [24,8], "src": [8,88], "f": 0, "t": 221, "d": [11], "a": 1 },
-						{ "px": [32,8], "src": [8,88], "f": 0, "t": 221, "d": [12], "a": 1 },
-						{ "px": [40,8], "src": [8,88], "f": 0, "t": 221, "d": [13], "a": 1 },
-						{ "px": [48,8], "src": [8,88], "f": 0, "t": 221, "d": [14], "a": 1 },
-						{ "px": [56,8], "src": [8,88], "f": 0, "t": 221, "d": [15], "a": 1 },
-						{ "px": [0,16], "src": [88,56], "f": 0, "t": 151, "d": [16], "a": 1 },
-						{ "px": [0,24], "src": [16,72], "f": 0, "t": 182, "d": [24], "a": 1 },
-						{ "px": [0,32], "src": [16,80], "f": 0, "t": 202, "d": [32], "a": 1 },
-						{ "px": [8,32], "src": [16,56], "f": 0, "t": 142, "d": [33], "a": 1 },
-						{ "px": [0,40], "src": [16,80], "f": 0, "t": 202, "d": [40], "a": 1 },
-						{ "px": [0,48], "src": [16,80], "f": 0, "t": 202, "d": [48], "a": 1 },
-						{ "px": [0,56], "src": [16,88], "f": 0, "t": 222, "d": [56], "a": 1 }
+						{ "px": [0,8], "src": [8,88], "f": 0, "t": 221, "d": [24], "a": 1 },
+						{ "px": [8,8], "src": [8,88], "f": 0, "t": 221, "d": [25], "a": 1 },
+						{ "px": [16,8], "src": [8,88], "f": 0, "t": 221, "d": [26], "a": 1 },
+						{ "px": [24,8], "src": [8,88], "f": 0, "t": 221, "d": [27], "a": 1 },
+						{ "px": [32,8], "src": [8,88], "f": 0, "t": 221, "d": [28], "a": 1 },
+						{ "px": [40,8], "src": [8,88], "f": 0, "t": 221, "d": [29], "a": 1 },
+						{ "px": [48,8], "src": [8,88], "f": 0, "t": 221, "d": [30], "a": 1 },
+						{ "px": [56,8], "src": [8,88], "f": 0, "t": 221, "d": [31], "a": 1 },
+						{ "px": [0,16], "src": [88,56], "f": 0, "t": 151, "d": [48], "a": 1 },
+						{ "px": [0,24], "src": [16,72], "f": 0, "t": 182, "d": [72], "a": 1 },
+						{ "px": [0,32], "src": [16,80], "f": 0, "t": 202, "d": [96], "a": 1 },
+						{ "px": [8,32], "src": [16,56], "f": 0, "t": 142, "d": [97], "a": 1 },
+						{ "px": [0,40], "src": [16,80], "f": 0, "t": 202, "d": [120], "a": 1 },
+						{ "px": [0,48], "src": [16,80], "f": 0, "t": 202, "d": [144], "a": 1 },
+						{ "px": [0,56], "src": [16,88], "f": 0, "t": 222, "d": [168], "a": 1 }
 					],
 					"entityInstances": []
 				}
