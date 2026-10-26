@@ -1,4 +1,6 @@
-#include "nlohmann/detail/value_t.hpp"
+#include "globals.h"
+#include "level.h"
+#include "player.h"
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -8,155 +10,10 @@
 
 using json = nlohmann::json;
 
-// Constants
-constexpr int screenWidth = 1000;
-constexpr int screenHeight = 600;
-constexpr float TILESIZE = 8.0f;
-
-// Game Data
-struct Player {
-        float jump_height;
-        float jump_time_to_peak;
-        float jump_time_to_fall;
-
-        float jump_velocity;
-        float jump_gravity;
-        float fall_gravity;
-
-        float walk_speed;
-
-        Vector2 pos = {0.0f, 0.0f};
-        Vector2 vel = {0.0f, 0.0f};
-
-        bool grounded = true;
-        bool touches_wall;
-
-        float wall_coyote_timer;
-        float wall_coyote_time;
-};
-
-struct TileBounds {
-        int left, right, top, bottom;
-};
-
-struct Tile {
-        Vector2 world_pos;
-        Vector2 src_pos;
-};
-
-struct Door {
-        Vector2 pos;
-
-        std::string target_level;
-        Vector2 target_pos;
-};
-
-struct Level {
-        std::string id;
-        Vector2 world_pos = {0, 0};
-        Vector2 world_size = {0, 0};
-
-        std::vector<Tile> tiles = {};
-        std::vector<int> collision_grid = {};
-
-        int collision_width = 0;
-        int collision_height = 0;
-
-        // Entities
-        Vector2 player_start;
-        Vector2 key;
-        std::vector<Door> doors;
-};
-
-struct World {
-        std::vector<Level> levels = {};
-        Level *current_level = nullptr;
-};
-
 struct Input {
         float move_x;
         bool jump_pressed;
 };
-
-// Game logic related functions
-int SetupPlayer(Player *player, Level *level) {
-    player->jump_height = 18.0f;
-    player->jump_time_to_peak = 0.35f;
-    player->jump_time_to_fall = 0.25f;
-
-    player->jump_velocity =
-        (2.0f * player->jump_height) / player->jump_time_to_peak;
-    player->jump_gravity =
-        (-2.0f * player->jump_height) /
-        (player->jump_time_to_peak * player->jump_time_to_peak) * -1;
-    player->fall_gravity =
-        (-2.0f * player->jump_height) /
-        (player->jump_time_to_fall * player->jump_time_to_fall) * -1;
-
-    player->wall_coyote_time = 0.1f;
-    player->wall_coyote_timer = 0.0f;
-
-    player->walk_speed = 45.0f;
-
-    player->pos = {level->player_start.x * TILESIZE,
-                   level->player_start.y * TILESIZE};
-    std::cout << level->player_start.x << "|" << level->player_start.y
-              << std::endl;
-
-    return 0;
-}
-
-Level LoadLevel(const json &data) {
-    Level level;
-
-    level.id = data["identifier"].get<std::string>();
-    level.world_pos = {data["worldX"].get<float>(),
-                       data["worldY"].get<float>()};
-    level.world_size = {data["pxWid"].get<float>(), data["pxHei"].get<float>()};
-
-    for (const auto &layer : data["layerInstances"]) {
-        const std::string type = layer["__type"].get<std::string>();
-
-        if (type == "Entities") {
-            const auto &entities = layer["entityInstances"];
-
-            for (const auto &entity : entities) {
-                // TODO: Also feed in other entities
-                const std::string entity_id =
-                    entity["__identifier"].get<std::string>();
-
-                if (entity_id == "PlayerStart") {
-                    const float x = entity["__grid"][0].get<float>();
-                    const float y = entity["__grid"][1].get<float>();
-                    level.player_start = {x, y};
-                }
-            }
-        } else if (type == "Tiles") {
-            const auto &grid_tiles = layer["gridTiles"];
-
-            level.tiles.reserve(grid_tiles.size());
-
-            for (const auto &tile : grid_tiles) {
-                level.tiles.push_back(
-                    {.world_pos = {tile["px"][0], tile["px"][1]},
-                     .src_pos = {tile["src"][0], tile["src"][1]}});
-            }
-        } else if (type == "IntGrid") {
-            // Build collision grid
-            int width = layer["__cWid"];
-            int height = layer["__cHei"];
-            level.collision_width = width;
-            level.collision_height = height;
-
-            level.collision_grid.resize(width * height);
-
-            for (int i = 0; i < width * height; i++) {
-                level.collision_grid[i] = layer["intGridCsv"][i];
-            }
-        }
-    }
-    return level;
-}
 
 Input GatherInput() {
     Input input = {};
@@ -166,22 +23,6 @@ Input GatherInput() {
         input.move_x += 1.0f;
     input.jump_pressed = IsKeyPressed(KEY_SPACE);
     return input;
-}
-
-// Helper functions
-TileBounds GetTileBounds(Vector2 pos) {
-    // Returns surrounding tiles in gridspace
-    return {(int)floor(pos.x / TILESIZE),
-            (int)floor((pos.x + TILESIZE - 0.01f) / TILESIZE),
-            (int)floor(pos.y / TILESIZE),
-            (int)floor((pos.y + TILESIZE - 0.01f) / TILESIZE)};
-}
-
-bool IsSolid(const Level *level, int x, int y) {
-    if (x < 0 || x >= level->collision_width || y < 0 ||
-        y >= level->collision_height)
-        return false;
-    return level->collision_grid[y * level->collision_width + x] == 1;
 }
 
 int main() {
@@ -244,6 +85,7 @@ int main() {
     const float level_bottom =
         level->world_pos.y + level->collision_height * TILESIZE;
 
+    // --- Game Loop ---
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
 
@@ -270,6 +112,7 @@ int main() {
             }
         }
 
+        // Walljump Coyote
         if (player.touches_wall) {
             player.wall_coyote_timer = player.wall_coyote_time;
         } else {

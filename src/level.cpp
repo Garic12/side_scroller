@@ -1,0 +1,70 @@
+#include "level.h"
+#include "globals.h"
+
+Level LoadLevel(const nlohmann::json &data) {
+    Level level;
+
+    level.id = data["identifier"].get<std::string>();
+    level.world_pos = {data["worldX"].get<float>(),
+                       data["worldY"].get<float>()};
+    level.world_size = {data["pxWid"].get<float>(), data["pxHei"].get<float>()};
+
+    for (const auto &layer : data["layerInstances"]) {
+        const std::string type = layer["__type"].get<std::string>();
+
+        if (type == "Entities") {
+            const auto &entities = layer["entityInstances"];
+
+            for (const auto &entity : entities) {
+                // TODO: Also feed in other entities
+                const std::string entity_id =
+                    entity["__identifier"].get<std::string>();
+
+                if (entity_id == "PlayerStart") {
+                    const float x = entity["__grid"][0].get<float>();
+                    const float y = entity["__grid"][1].get<float>();
+                    level.player_start = {x, y};
+                }
+            }
+        } else if (type == "Tiles") {
+            const auto &grid_tiles = layer["gridTiles"];
+
+            level.tiles.reserve(grid_tiles.size());
+
+            for (const auto &tile : grid_tiles) {
+                level.tiles.push_back(
+                    {.world_pos = {tile["px"][0], tile["px"][1]},
+                     .src_pos = {tile["src"][0], tile["src"][1]}});
+            }
+        } else if (type == "IntGrid") {
+            // Build collision grid
+            int width = layer["__cWid"];
+            int height = layer["__cHei"];
+            level.collision_width = width;
+            level.collision_height = height;
+
+            level.collision_grid.resize(width * height);
+
+            for (int i = 0; i < width * height; i++) {
+                level.collision_grid[i] = layer["intGridCsv"][i];
+            }
+        }
+    }
+    return level;
+}
+
+// Helper functions
+TileBounds GetTileBounds(Vector2 pos) {
+    // Returns surrounding tiles in gridspace
+    return {(int)floor(pos.x / TILESIZE),
+            (int)floor((pos.x + TILESIZE - 0.01f) / TILESIZE),
+            (int)floor(pos.y / TILESIZE),
+            (int)floor((pos.y + TILESIZE - 0.01f) / TILESIZE)};
+}
+
+bool IsSolid(const Level *level, int x, int y) {
+    if (x < 0 || x >= level->collision_width || y < 0 ||
+        y >= level->collision_height)
+        return false;
+    return level->collision_grid[y * level->collision_width + x] == 1;
+}

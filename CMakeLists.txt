@@ -26,8 +26,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(raylib json)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-add_executable(Sidescroller
-    src/main.cpp
-)
+
+file(GLOB SOURCES CONFIGURE_DEPENDS src/*.cpp)
+add_executable(Sidescroller ${SOURCES})
+target_include_directories(Sidescroller PRIVATE src)
 
 target_link_libraries(Sidescroller PRIVATE raylib nlohmann_json::nlohmann_json)
