@@ -1,5 +1,4 @@
 #include "player.h"
-#include "globals.h"
 
 int SetupPlayer(Player *player, Level *level) {
     player->jump_height = 18.0f;
@@ -20,8 +19,7 @@ int SetupPlayer(Player *player, Level *level) {
 
     player->walk_speed = 45.0f;
 
-    player->pos = {level->player_start.x * TILESIZE,
-                   level->player_start.y * TILESIZE};
+    player->pos = {level->player_start.x, level->player_start.y};
 
     return 0;
 }

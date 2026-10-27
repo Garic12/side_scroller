@@ -1,5 +1,6 @@
 #include "level.h"
 #include "globals.h"
+#include <iostream>
 
 Level LoadLevel(const nlohmann::json &data) {
     Level level;
@@ -21,9 +22,24 @@ Level LoadLevel(const nlohmann::json &data) {
                     entity["__identifier"].get<std::string>();
 
                 if (entity_id == "PlayerStart") {
-                    const float x = entity["__grid"][0].get<float>();
-                    const float y = entity["__grid"][1].get<float>();
+                    const float x = entity["px"][0].get<float>();
+                    const float y = entity["px"][1].get<float>();
                     level.player_start = {x, y};
+                } else if (entity_id == "Door") {
+                    Door door;
+                    door.pos = {entity["__worldX"].get<float>(),
+                                entity["__worldY"].get<float>()};
+
+                    // Get target location of door
+                    const float target_x =
+                        entity["fieldInstances"][0]["__value"][0].get<float>();
+                    const float target_y =
+                        entity["fieldInstances"][0]["__value"][1].get<float>();
+
+                    // Get target level name
+                    door.target_level = entity["fieldInstances"][1]["__value"]
+                                            .get<std::string>();
+                    level.doors.push_back(door);
                 }
             }
         } else if (type == "Tiles") {

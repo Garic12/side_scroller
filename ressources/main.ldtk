@@ -11,67 +11,9 @@
 	"iid": "878b48c0-96d0-11f1-b53a-f18e94dfd92b",
 	"jsonVersion": "1.5.3",
 	"appBuildId": 473703,
-	"nextUid": 127,
+	"nextUid": 131,
 	"identifierStyle": "Capitalize",
-	"toc": [
-		{ "identifier": "Coins", "instances": [], "instancesData": [] },
-		{
-			"identifier": "Key",
-			"instances": [],
-			"instancesData": [{ "iids": {
-				"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de",
-				"levelIid": "878b96e0-96d0-11f1-b53a-55a3fb7b6050",
-				"layerIid": "1362cb30-bde0-11f1-ac8d-2972b8a8fe99",
-				"entityIid": "47c5a490-bde0-11f1-bfac-91f5864ffa36"
-			}, "worldX": 112, "worldY": 112, "widPx": 8, "heiPx": 8, "fields" : {} }]
-		},
-		{
-			"identifier": "PlayerStart",
-			"instances": [],
-			"instancesData": [
-				{ "iids": {
-					"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de",
-					"levelIid": "878b96e0-96d0-11f1-b53a-55a3fb7b6050",
-					"layerIid": "1362cb30-bde0-11f1-ac8d-2972b8a8fe99",
-					"entityIid": "24710ff0-bde0-11f1-ae51-0bc0f15c933c"
-				}, "worldX": 16, "worldY": 96, "widPx": 8, "heiPx": 8, "fields" : {} },
-				{ "iids": {
-					"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de",
-					"levelIid": "9a595bf0-bde0-11f1-bfac-0f7e0b12edc3",
-					"layerIid": "9a595bf2-bde0-11f1-bfac-b1002025ec69",
-					"entityIid": "be8b9af0-bde0-11f1-bfac-5d1b38cf2cc7"
-				}, "worldX": 200, "worldY": 88, "widPx": 8, "heiPx": 8, "fields" : {} }
-			]
-		},
-		{
-			"identifier": "Door",
-			"instances": [],
-			"instancesData": [
-				{ "iids": {
-					"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de",
-					"levelIid": "878b96e0-96d0-11f1-b53a-55a3fb7b6050",
-					"layerIid": "1362cb30-bde0-11f1-ac8d-2972b8a8fe99",
-					"entityIid": "30f1e910-bde0-11f1-bfac-cdc4b6c65f93"
-				}, "worldX": 184, "worldY": 80, "widPx": 8, "heiPx": 8, "fields": { "target": {
-					"entityIid": "66108b10-bde0-11f1-bfac-1dd7a3529a72",
-					"layerIid": "9a595bf2-bde0-11f1-bfac-b1002025ec69",
-					"levelIid": "9a595bf0-bde0-11f1-bfac-0f7e0b12edc3",
-					"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de"
-				} } },
-				{ "iids": {
-					"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de",
-					"levelIid": "9a595bf0-bde0-11f1-bfac-0f7e0b12edc3",
-					"layerIid": "9a595bf2-bde0-11f1-bfac-b1002025ec69",
-					"entityIid": "66108b10-bde0-11f1-bfac-1dd7a3529a72"
-				}, "worldX": 192, "worldY": 80, "widPx": 8, "heiPx": 8, "fields": { "target": {
-					"entityIid": "30f1e910-bde0-11f1-bfac-cdc4b6c65f93",
-					"layerIid": "1362cb30-bde0-11f1-ac8d-2972b8a8fe99",
-					"levelIid": "878b96e0-96d0-11f1-b53a-55a3fb7b6050",
-					"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de"
-				} } }
-			]
-		}
-	],
+	"toc": [],
 	"worldLayout": "GridVania",
 	"worldGridWidth": 32,
 	"worldGridHeight": 32,
@@ -212,7 +154,7 @@
 			"identifier": "Coins",
 			"uid": 118,
 			"tags": [],
-			"exportToToc": true,
+			"exportToToc": false,
 			"allowOutOfBounds": false,
 			"doc": null,
 			"width": 8,
@@ -247,7 +189,7 @@
 			"identifier": "Key",
 			"uid": 119,
 			"tags": [],
-			"exportToToc": true,
+			"exportToToc": false,
 			"allowOutOfBounds": false,
 			"doc": null,
 			"width": 8,
@@ -282,7 +224,7 @@
 			"identifier": "PlayerStart",
 			"uid": 101,
 			"tags": [],
-			"exportToToc": true,
+			"exportToToc": false,
 			"allowOutOfBounds": false,
 			"doc": null,
 			"width": 8,
@@ -317,7 +259,7 @@
 			"identifier": "Door",
 			"uid": 120,
 			"tags": [],
-			"exportToToc": true,
+			"exportToToc": false,
 			"allowOutOfBounds": false,
 			"doc": null,
 			"width": 8,
@@ -348,19 +290,19 @@
 			"pivotY": 0,
 			"fieldDefs": [
 				{
-					"identifier": "target",
+					"identifier": "target_location",
 					"doc": null,
-					"__type": "EntityRef",
-					"uid": 126,
-					"type": "F_EntityRef",
-					"isArray": false,
+					"__type": "Array<Float>",
+					"uid": 129,
+					"type": "F_Float",
+					"isArray": true,
 					"canBeNull": false,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "RefLinkBetweenCenters",
+					"arrayMinLength": 2,
+					"arrayMaxLength": 2,
+					"editorDisplayMode": "Hidden",
 					"editorDisplayScale": 1,
 					"editorDisplayPos": "Above",
-					"editorLinkStyle": "CurvedArrow",
+					"editorLinkStyle": "StraightArrow",
 					"editorDisplayColor": null,
 					"editorAlwaysShow": false,
 					"editorShowInWorld": true,
@@ -368,7 +310,44 @@
 					"editorTextSuffix": null,
 					"editorTextPrefix": null,
 					"useForSmartColor": false,
-					"exportToToc": true,
+					"exportToToc": false,
+					"searchable": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
+					"identifier": "target_level",
+					"doc": null,
+					"__type": "String",
+					"uid": 130,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "StraightArrow",
+					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"exportToToc": false,
 					"searchable": false,
 					"min": null,
 					"max": null,
@@ -500,7 +479,7 @@
 							"__tags": [],
 							"__tile": null,
 							"__smartColor": "#0099DB",
-							"iid": "24710ff0-bde0-11f1-ae51-0bc0f15c933c",
+							"iid": "666281f0-bde0-11f1-bcac-914172132d3b",
 							"width": 8,
 							"height": 8,
 							"defUid": 101,
@@ -510,42 +489,24 @@
 							"__worldY": 96
 						},
 						{
-							"__identifier": "Key",
-							"__grid": [14,14],
-							"__pivot": [0,0],
-							"__tags": [],
-							"__tile": null,
-							"__smartColor": "#FEAE34",
-							"iid": "47c5a490-bde0-11f1-bfac-91f5864ffa36",
-							"width": 8,
-							"height": 8,
-							"defUid": 119,
-							"px": [112,112],
-							"fieldInstances": [],
-							"__worldX": 112,
-							"__worldY": 112
-						},
-						{
 							"__identifier": "Door",
 							"__grid": [23,10],
 							"__pivot": [0,0],
 							"__tags": [],
 							"__tile": null,
 							"__smartColor": "#C28569",
-							"iid": "30f1e910-bde0-11f1-bfac-cdc4b6c65f93",
+							"iid": "69ffa5e0-bde0-11f1-bcac-3d224cc31aae",
 							"width": 8,
 							"height": 8,
 							"defUid": 120,
 							"px": [184,80],
-							"fieldInstances": [{ "__identifier": "target", "__type": "EntityRef", "__value": {
-								"entityIid": "66108b10-bde0-11f1-bfac-1dd7a3529a72",
-								"layerIid": "9a595bf2-bde0-11f1-bfac-b1002025ec69",
-								"levelIid": "9a595bf0-bde0-11f1-bfac-0f7e0b12edc3",
-								"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de"
-							}, "__tile": null, "defUid": 126, "realEditorValues": [{
-								"id": "V_String",
-								"params": ["66108b10-bde0-11f1-bfac-1dd7a3529a72"]
-							}] }],
+							"fieldInstances": [
+								{ "__identifier": "target_location", "__type": "Array<Float>", "__value": [192,80], "__tile": null, "defUid": 129, "realEditorValues": [ { "id": "V_Float", "params": [192] }, { "id": "V_Float", "params": [80] } ] },
+								{ "__identifier": "target_level", "__type": "String", "__value": "Level_1", "__tile": null, "defUid": 130, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["Level_1"]
+								}] }
+							],
 							"__worldX": 184,
 							"__worldY": 80
 						}
@@ -684,8 +645,8 @@
 			"worldX": 192,
 			"worldY": 64,
 			"worldDepth": 0,
-			"pxWid": 192,
-			"pxHei": 96,
+			"pxWid": 256,
+			"pxHei": 160,
 			"__bgColor": "#696A79",
 			"bgColor": null,
 			"useAutoIdentifier": true,
@@ -701,8 +662,8 @@
 				{
 					"__identifier": "Map_Information",
 					"__type": "IntGrid",
-					"__cWid": 24,
-					"__cHei": 12,
+					"__cWid": 32,
+					"__cHei": 20,
 					"__gridSize": 8,
 					"__opacity": 1,
 					"__pxTotalOffsetX": 0,
@@ -714,18 +675,28 @@
 					"layerDefUid": 117,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": true,
+					"visible": false,
 					"optionalRules": [],
 					"intGridCsv": [
-						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,
+						1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-						0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,
-						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-						0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-						0,0,0,0,0,0,0,0
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0
 					],
 					"autoLayerTiles": [],
 					"seed": 499391,
@@ -736,8 +707,8 @@
 				{
 					"__identifier": "Information",
 					"__type": "Entities",
-					"__cWid": 24,
-					"__cHei": 12,
+					"__cWid": 32,
+					"__cHei": 20,
 					"__gridSize": 8,
 					"__opacity": 1,
 					"__pxTotalOffsetX": 0,
@@ -764,20 +735,18 @@
 							"__tags": [],
 							"__tile": null,
 							"__smartColor": "#C28569",
-							"iid": "66108b10-bde0-11f1-bfac-1dd7a3529a72",
+							"iid": "6d1a7a70-bde0-11f1-bcac-0585cd46f9e6",
 							"width": 8,
 							"height": 8,
 							"defUid": 120,
 							"px": [0,16],
-							"fieldInstances": [{ "__identifier": "target", "__type": "EntityRef", "__value": {
-								"entityIid": "30f1e910-bde0-11f1-bfac-cdc4b6c65f93",
-								"layerIid": "1362cb30-bde0-11f1-ac8d-2972b8a8fe99",
-								"levelIid": "878b96e0-96d0-11f1-b53a-55a3fb7b6050",
-								"worldIid": "878b6fd0-96d0-11f1-b53a-0de3e8ad54de"
-							}, "__tile": null, "defUid": 126, "realEditorValues": [{
-								"id": "V_String",
-								"params": ["30f1e910-bde0-11f1-bfac-cdc4b6c65f93"]
-							}] }],
+							"fieldInstances": [
+								{ "__identifier": "target_location", "__type": "Array<Float>", "__value": [184,80], "__tile": null, "defUid": 129, "realEditorValues": [ { "id": "V_Float", "params": [184] }, { "id": "V_Float", "params": [80] } ] },
+								{ "__identifier": "target_level", "__type": "String", "__value": "Level_0", "__tile": null, "defUid": 130, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["Level_0"]
+								}] }
+							],
 							"__worldX": 192,
 							"__worldY": 80
 						},
@@ -788,7 +757,7 @@
 							"__tags": [],
 							"__tile": null,
 							"__smartColor": "#0099DB",
-							"iid": "be8b9af0-bde0-11f1-bfac-5d1b38cf2cc7",
+							"iid": "687cd670-bde0-11f1-bcac-4755f1f32389",
 							"width": 8,
 							"height": 8,
 							"defUid": 101,
@@ -802,8 +771,8 @@
 				{
 					"__identifier": "Ground",
 					"__type": "Tiles",
-					"__cWid": 24,
-					"__cHei": 12,
+					"__cWid": 32,
+					"__cHei": 20,
 					"__gridSize": 8,
 					"__opacity": 1,
 					"__pxTotalOffsetX": 0,
@@ -822,21 +791,21 @@
 					"seed": 8231692,
 					"overrideTilesetUid": null,
 					"gridTiles": [
-						{ "px": [0,8], "src": [8,88], "f": 0, "t": 221, "d": [24], "a": 1 },
-						{ "px": [8,8], "src": [8,88], "f": 0, "t": 221, "d": [25], "a": 1 },
-						{ "px": [16,8], "src": [8,88], "f": 0, "t": 221, "d": [26], "a": 1 },
-						{ "px": [24,8], "src": [8,88], "f": 0, "t": 221, "d": [27], "a": 1 },
-						{ "px": [32,8], "src": [8,88], "f": 0, "t": 221, "d": [28], "a": 1 },
-						{ "px": [40,8], "src": [8,88], "f": 0, "t": 221, "d": [29], "a": 1 },
-						{ "px": [48,8], "src": [8,88], "f": 0, "t": 221, "d": [30], "a": 1 },
-						{ "px": [56,8], "src": [8,88], "f": 0, "t": 221, "d": [31], "a": 1 },
-						{ "px": [0,16], "src": [88,56], "f": 0, "t": 151, "d": [48], "a": 1 },
-						{ "px": [0,24], "src": [16,72], "f": 0, "t": 182, "d": [72], "a": 1 },
-						{ "px": [0,32], "src": [16,80], "f": 0, "t": 202, "d": [96], "a": 1 },
-						{ "px": [8,32], "src": [16,56], "f": 0, "t": 142, "d": [97], "a": 1 },
-						{ "px": [0,40], "src": [16,80], "f": 0, "t": 202, "d": [120], "a": 1 },
-						{ "px": [0,48], "src": [16,80], "f": 0, "t": 202, "d": [144], "a": 1 },
-						{ "px": [0,56], "src": [16,88], "f": 0, "t": 222, "d": [168], "a": 1 }
+						{ "px": [0,8], "src": [8,88], "f": 0, "t": 221, "d": [32], "a": 1 },
+						{ "px": [8,8], "src": [8,88], "f": 0, "t": 221, "d": [33], "a": 1 },
+						{ "px": [16,8], "src": [8,88], "f": 0, "t": 221, "d": [34], "a": 1 },
+						{ "px": [24,8], "src": [8,88], "f": 0, "t": 221, "d": [35], "a": 1 },
+						{ "px": [32,8], "src": [8,88], "f": 0, "t": 221, "d": [36], "a": 1 },
+						{ "px": [40,8], "src": [8,88], "f": 0, "t": 221, "d": [37], "a": 1 },
+						{ "px": [48,8], "src": [8,88], "f": 0, "t": 221, "d": [38], "a": 1 },
+						{ "px": [56,8], "src": [8,88], "f": 0, "t": 221, "d": [39], "a": 1 },
+						{ "px": [0,16], "src": [88,56], "f": 0, "t": 151, "d": [64], "a": 1 },
+						{ "px": [0,24], "src": [16,72], "f": 0, "t": 182, "d": [96], "a": 1 },
+						{ "px": [0,32], "src": [16,80], "f": 0, "t": 202, "d": [128], "a": 1 },
+						{ "px": [8,32], "src": [16,56], "f": 0, "t": 142, "d": [129], "a": 1 },
+						{ "px": [0,40], "src": [16,80], "f": 0, "t": 202, "d": [160], "a": 1 },
+						{ "px": [0,48], "src": [16,80], "f": 0, "t": 202, "d": [192], "a": 1 },
+						{ "px": [0,56], "src": [16,88], "f": 0, "t": 222, "d": [224], "a": 1 }
 					],
 					"entityInstances": []
 				}

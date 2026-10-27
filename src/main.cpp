@@ -2,10 +2,12 @@
 #include "level.h"
 #include "player.h"
 #include <fstream>
+#include <imgui.h>
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <raylib.h>
 #include <raymath.h>
+#include <rlImGui.h>
 #include <vector>
 
 using json = nlohmann::json;
@@ -30,6 +32,8 @@ int main() {
 
     InitWindow(screenWidth, screenHeight, "Sidescroller");
     SetTargetFPS(60);
+
+    rlImGuiSetup(true);
 
     // Load world with all sublevels
     // Read json
@@ -78,18 +82,19 @@ int main() {
     const float half_view_x = screenWidth / (2.0f * cam.zoom);
     const float half_view_y = screenHeight / (2.0f * cam.zoom);
 
-    const float level_left = level->world_pos.x;
-    const float level_right =
-        level->world_pos.x + level->collision_width * TILESIZE;
-    const float level_top = level->world_pos.y;
-    const float level_bottom =
-        level->world_pos.y + level->collision_height * TILESIZE;
+    // Gameplay runs in level-local space (0,0 = top-left of current level)
+    const float level_left = 0.0f;
+    const float level_right = level->world_size.x;
+    const float level_top = 0.0f;
+    const float level_bottom = level->world_size.y;
 
     // --- Game Loop ---
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
 
-        Input input = GatherInput();
+        Input input = {};
+        if (!ImGui::GetIO().WantCaptureKeyboard)
+            input = GatherInput();
 
         // Horizontal movement and collision
         float dx = input.move_x * player.walk_speed * dt;
@@ -168,7 +173,6 @@ int main() {
                   level_bottom - half_view_y);
 
         BeginDrawing();
-
         ClearBackground({40, 40, 46});
 
         BeginMode2D(cam);
@@ -183,7 +187,7 @@ int main() {
                               .y = tile.world_pos.y,
                               .width = TILESIZE,
                               .height = TILESIZE};
-            DrawTexturePro(texture, src, dest, level->world_pos, 0.0f, WHITE);
+            DrawTexturePro(texture, src, dest, {0, 0}, 0.0f, WHITE);
         }
 
         // Draw Player
@@ -192,23 +196,38 @@ int main() {
                           .y = player.pos.y,
                           .width = TILESIZE,
                           .height = TILESIZE};
-        DrawTexturePro(texture, src, dest, level->world_pos, 0.0f, WHITE);
+        DrawTexturePro(texture, src, dest, {0, 0}, 0.0f, WHITE);
         EndMode2D();
 
         if (DEBUG) {
-            DrawText(TextFormat("X: %d | Y: %d",
-                                (int)floor(player.pos.x / TILESIZE),
-                                (int)floor(player.pos.y / TILESIZE)),
-                     0, 0, 20, WHITE);
+            rlImGuiBegin();
+
+            ImGui::Begin("Debug");
+            // ImGui::Text("FPS: %d", GetFPS());
+            ImGui::DragFloat2("Player pos", &player.pos.x);
+            // ImGui::Checkbox("Grounded", &player.grounded);
+            ImGui::Separator();
+            // ImGui::DragFloat("Walk speed", &player.walk_speed, 1.0f);
+            ImGui::Text("Level: Left: %.1f, Right: %.1f", level_left,
+                        level_right);
+            ImGui::Text("Level: Top: %.1f, Bottom: %.1f", level_top,
+                        level_bottom);
+            ImGui::End();
+
+            // ImGui::ShowDemoWindow(); // shows every available widget, handy
+            // as a reference
+
+            rlImGuiEnd();
         }
         EndDrawing();
     }
-    CloseWindow();
-
     // Cleanup
     level->tiles.clear();
     level->collision_grid.clear();
     UnloadTexture(texture);
+
+    rlImGuiShutdown();
+    CloseWindow();
 
     return 0;
 }
