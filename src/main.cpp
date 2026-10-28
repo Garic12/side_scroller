@@ -27,6 +27,53 @@ Input GatherInput() {
     return input;
 }
 
+Vector2 Perpendicular(Vector2 v) { return {-v.y, v.x}; }
+
+Vector2 ProjectionMinMax(const Vector2 axis, const Vector2 *points, int size) {
+    float min = FLT_MAX;
+    float max = FLT_MIN;
+
+    for (int i = 0; i < size; i++) {
+        float projection = Vector2DotProduct(points[i], axis);
+
+        if (projection < min) {
+            min = projection;
+        }
+        if (projection > max) {
+            max = projection;
+        }
+    }
+    return {min, max};
+}
+
+bool CollisionRectSpike(const Rectangle &rect, const Spike &spike) {
+    // Calculate all axes we want to check the collision over
+    const Vector2 axes[]{
+        {1.0f, 0.0f},
+        {0.0f, 1.0f},
+        Perpendicular(Vector2Subtract(spike.a, spike.b)),
+        Perpendicular(Vector2Subtract(spike.b, spike.c)),
+        Perpendicular(Vector2Subtract(spike.c, spike.a)),
+    };
+
+    Vector2 corners_rect[4] = {{rect.x, rect.y},
+                               {rect.x + rect.width, rect.y},
+                               {rect.x, rect.y + rect.height},
+                               {rect.x + rect.width, rect.y + rect.height}};
+    Vector2 corners_spike[3] = {spike.a, spike.b, spike.c};
+
+    for (int i = 0; i < 4; i++) {
+        Vector2 minmax_rect = ProjectionMinMax(axes[i], corners_rect, 4);
+        Vector2 minmax_spike = ProjectionMinMax(axes[i], corners_spike, 3);
+
+        if (!(minmax_rect.y >= minmax_spike.x &&
+              minmax_spike.y >= minmax_rect.x)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 int main() {
     int DEBUG = 1;
 
@@ -94,7 +141,10 @@ int main() {
         player.touches_wall = false;
         if (dx != 0) {
             player.pos.x += dx;
-            TileBounds bounds = GetTileBounds(player.pos);
+
+            const Rectangle hitbox = GetPlayerHitbox(player);
+            const TileBounds bounds = GetTileBounds(hitbox);
+
             for (int y = bounds.top; y <= bounds.bottom; ++y) {
                 for (int x = bounds.left; x <= bounds.right; ++x) {
                     // Check grid bounds
@@ -102,13 +152,14 @@ int main() {
                         IsColliding(world.current_level, x, y);
                     if (collision_id == 1) {
                         player.touches_wall = true;
-                        if (dx > 0) {
-                            player.pos.x = x * TILESIZE - TILESIZE;
-                        } else if (dx < 0) {
-                            player.pos.x = (x + 1) * TILESIZE;
+
+                        if (dx > 0.0f) {
+                            player.pos.x = x * TILESIZE - player.body.offset.x -
+                                           player.body.size.x;
+                        } else if (dx < 0.0f) {
+                            player.pos.x =
+                                (x + 1) * TILESIZE - player.body.offset.x;
                         }
-                    } else if (collision_id == 2) {
-                        player.pos = player.last_entry;
                     }
                 }
             }
@@ -143,7 +194,8 @@ int main() {
         float dy = player.vel.y * dt;
         if (dy != 0) {
             player.pos.y += dy;
-            TileBounds bounds = GetTileBounds(player.pos);
+            const Rectangle hitbox = GetPlayerHitbox(player);
+            const TileBounds bounds = GetTileBounds(hitbox);
 
             for (int y = bounds.top; y <= bounds.bottom; ++y) {
                 for (int x = bounds.left; x <= bounds.right; ++x) {
@@ -151,15 +203,15 @@ int main() {
                     const int collision_id =
                         IsColliding(world.current_level, x, y);
                     if (collision_id == 1) {
-                        if (dy > 0) {
-                            player.pos.y = y * TILESIZE - TILESIZE;
+                        if (dy > 0.0f) {
+                            player.pos.y = y * TILESIZE - player.body.offset.y -
+                                           player.body.size.y;
                             player.grounded = true;
-                        } else if (dy < 0) {
-                            player.pos.y = (y + 1) * TILESIZE;
+                        } else if (dy < 0.0f) {
+                            player.pos.y =
+                                (y + 1) * TILESIZE - player.body.offset.y;
                         }
                         player.vel.y = 0.0f;
-                    } else if (collision_id == 2) {
-                        player.pos = player.last_entry;
                     }
                 }
             }

@@ -1,5 +1,6 @@
 #include "level.h"
 #include "globals.h"
+#include "raylib.h"
 
 Level LoadLevel(const nlohmann::json &data) {
     Level level;
@@ -46,6 +47,15 @@ Level LoadLevel(const nlohmann::json &data) {
                     door.target_level = entity["fieldInstances"][1]["__value"]
                                             .get<std::string>();
                     level.doors.push_back(door);
+                } else if (entity_id == "Spike") {
+                    Vector2 spike_pos = {entity["__worldX"].get<float>(),
+                                         entity["__worldY"].get<float>()};
+                    Spike spike;
+                    spike.a = {spike_pos.x + 1, spike_pos.y + 7};
+                    spike.a = {spike_pos.x + 4, spike_pos.y + 1};
+                    spike.a = {spike_pos.x + 7, spike_pos.y + 7};
+
+                    level.spikes.push_back(spike);
                 }
             }
         } else if (type == "Tiles") {
@@ -79,12 +89,12 @@ Level LoadLevel(const nlohmann::json &data) {
 }
 
 // Helper functions
-TileBounds GetTileBounds(Vector2 pos) {
+TileBounds GetTileBounds(const Rectangle &rect) {
     // Returns surrounding tiles in gridspace
-    return {(int)floor(pos.x / TILESIZE),
-            (int)floor((pos.x + TILESIZE - 0.01f) / TILESIZE),
-            (int)floor(pos.y / TILESIZE),
-            (int)floor((pos.y + TILESIZE - 0.01f) / TILESIZE)};
+    return {(int)floor(rect.x / TILESIZE),
+            (int)floor((rect.x + rect.width - 0.01f) / TILESIZE),
+            (int)floor(rect.y / TILESIZE),
+            (int)floor((rect.y + rect.height - 0.01f) / TILESIZE)};
 }
 
 int IsColliding(const Level *level, int x, int y) {

@@ -4,6 +4,12 @@
 #include <string>
 #include <vector>
 
+struct Spike {
+        Vector2 a;
+        Vector2 b;
+        Vector2 c;
+};
+
 struct Tile {
         Vector2 world_pos;
         Vector2 src_pos;
@@ -35,6 +41,7 @@ struct Level {
         Vector2 player_start;
         Vector2 key;
         std::vector<Door> doors;
+        std::vector<Spike> spikes;
 };
 
 struct World {
@@ -45,5 +52,5 @@ struct World {
 Level LoadLevel(const nlohmann::json &data);
 
 // Helper functions
-TileBounds GetTileBounds(Vector2 pos);
+TileBounds GetTileBounds(const Rectangle &rect);
 int IsColliding(const Level *level, int x, int y);

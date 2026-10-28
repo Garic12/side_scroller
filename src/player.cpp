@@ -24,3 +24,15 @@ int SetupPlayer(Player *player, Level *level) {
 
     return 0;
 }
+
+Rectangle GetPlayerHitbox(const Player &player) {
+    return {player.pos.x + player.body.offset.x,
+            player.pos.y + player.body.offset.y, player.body.size.x,
+            player.body.size.y};
+}
+
+Rectangle GetPlayerHurtbox(const Player &player) {
+    return {player.pos.x + player.hurtbox.offset.x,
+            player.pos.y + player.hurtbox.offset.y, player.hurtbox.size.x,
+            player.hurtbox.size.y};
+}
