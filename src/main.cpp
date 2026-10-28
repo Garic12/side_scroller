@@ -98,13 +98,17 @@ int main() {
             for (int y = bounds.top; y <= bounds.bottom; ++y) {
                 for (int x = bounds.left; x <= bounds.right; ++x) {
                     // Check grid bounds
-                    if (IsSolid(world.current_level, x, y)) {
+                    const int collision_id =
+                        IsColliding(world.current_level, x, y);
+                    if (collision_id == 1) {
                         player.touches_wall = true;
                         if (dx > 0) {
                             player.pos.x = x * TILESIZE - TILESIZE;
                         } else if (dx < 0) {
                             player.pos.x = (x + 1) * TILESIZE;
                         }
+                    } else if (collision_id == 2) {
+                        player.pos = world.current_level->player_start;
                     }
                 }
             }
@@ -160,7 +164,9 @@ int main() {
             for (int y = bounds.top; y <= bounds.bottom; ++y) {
                 for (int x = bounds.left; x <= bounds.right; ++x) {
                     // Check grid bounds
-                    if (IsSolid(world.current_level, x, y)) {
+                    const int collision_id =
+                        IsColliding(world.current_level, x, y);
+                    if (collision_id == 1) {
                         if (dy > 0) {
                             player.pos.y = y * TILESIZE - TILESIZE;
                             player.grounded = true;
@@ -168,6 +174,8 @@ int main() {
                             player.pos.y = (y + 1) * TILESIZE;
                         }
                         player.vel.y = 0.0f;
+                    } else if (collision_id == 2) {
+                        player.pos = world.current_level->player_start;
                     }
                 }
             }
@@ -216,6 +224,7 @@ int main() {
             rlImGuiBegin();
 
             ImGui::Begin("Debug");
+            ImGui::Text("Frametime: %.3f ms", GetFrameTime() * 1000.0f);
             ImGui::Text("Current Level: %s", (world.current_level->id).c_str());
             ImGui::DragFloat2("Player pos", &player.pos.x);
             ImGui::DragFloat2("Level Root", &world.current_level->world_pos.x);

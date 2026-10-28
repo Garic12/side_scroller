@@ -46,4 +46,4 @@ Level LoadLevel(const nlohmann::json &data);
 
 // Helper functions
 TileBounds GetTileBounds(Vector2 pos);
-bool IsSolid(const Level *level, int x, int y);
+int IsColliding(const Level *level, int x, int y);

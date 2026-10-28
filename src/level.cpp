@@ -55,8 +55,10 @@ Level LoadLevel(const nlohmann::json &data) {
 
             for (const auto &tile : grid_tiles) {
                 level.tiles.push_back(
-                    {.world_pos = {level.world_pos.x + tile["px"][0].get<float>(),
-                                   level.world_pos.y + tile["px"][1].get<float>()},
+                    {.world_pos = {level.world_pos.x +
+                                       tile["px"][0].get<float>(),
+                                   level.world_pos.y +
+                                       tile["px"][1].get<float>()},
                      .src_pos = {tile["src"][0], tile["src"][1]}});
             }
         } else if (type == "IntGrid") {
@@ -85,12 +87,12 @@ TileBounds GetTileBounds(Vector2 pos) {
             (int)floor((pos.y + TILESIZE - 0.01f) / TILESIZE)};
 }
 
-bool IsSolid(const Level *level, int x, int y) {
+int IsColliding(const Level *level, int x, int y) {
     // x, y are world tile coords, convert to level-local grid coords
     x -= (int)(level->world_pos.x / TILESIZE);
     y -= (int)(level->world_pos.y / TILESIZE);
     if (x < 0 || x >= level->collision_width || y < 0 ||
         y >= level->collision_height)
         return false;
-    return level->collision_grid[y * level->collision_width + x] == 1;
+    return level->collision_grid[y * level->collision_width + x];
 }
