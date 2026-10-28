@@ -1,6 +1,5 @@
 #include "level.h"
 #include "globals.h"
-#include <iostream>
 
 Level LoadLevel(const nlohmann::json &data) {
     Level level;
@@ -25,10 +24,15 @@ Level LoadLevel(const nlohmann::json &data) {
                     const float x = entity["px"][0].get<float>();
                     const float y = entity["px"][1].get<float>();
                     level.player_start = {x, y};
+
                 } else if (entity_id == "Door") {
                     Door door;
-                    door.pos = {entity["__worldX"].get<float>(),
-                                entity["__worldY"].get<float>()};
+
+                    Vector2 pos = {entity["__worldX"].get<float>(),
+                                   entity["__worldY"].get<float>()};
+                    Vector2 size = {entity["__width"].get<float>(),
+                                    entity["__height"].get<float>()};
+                    door.hitbox = {pos.x, pos.y, size.x, size.y};
 
                     // Get target location of door
                     const float target_x =

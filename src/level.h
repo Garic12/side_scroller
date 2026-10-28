@@ -14,7 +14,7 @@ struct TileBounds {
 };
 
 struct Door {
-        Vector2 pos;
+        Rectangle hitbox;
 
         std::string target_level;
         Vector2 target_pos;

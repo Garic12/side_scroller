@@ -262,11 +262,11 @@
 			"exportToToc": false,
 			"allowOutOfBounds": false,
 			"doc": null,
-			"width": 8,
+			"width": 2,
 			"height": 8,
-			"resizableX": false,
+			"resizableX": true,
 			"resizableY": false,
-			"minWidth": null,
+			"minWidth": 2,
 			"maxWidth": null,
 			"minHeight": null,
 			"maxHeight": null,
@@ -474,7 +474,7 @@
 					"entityInstances": [
 						{
 							"__identifier": "PlayerStart",
-							"__grid": [2,12],
+							"__grid": [17,12],
 							"__pivot": [0,0],
 							"__tags": [],
 							"__tile": null,
@@ -483,9 +483,9 @@
 							"width": 8,
 							"height": 8,
 							"defUid": 101,
-							"px": [16,96],
+							"px": [136,96],
 							"fieldInstances": [],
-							"__worldX": 16,
+							"__worldX": 136,
 							"__worldY": 96
 						},
 						{
@@ -496,18 +496,18 @@
 							"__tile": null,
 							"__smartColor": "#C28569",
 							"iid": "69ffa5e0-bde0-11f1-bcac-3d224cc31aae",
-							"width": 8,
+							"width": 2,
 							"height": 8,
 							"defUid": 120,
-							"px": [184,80],
+							"px": [190,80],
 							"fieldInstances": [
-								{ "__identifier": "target_location", "__type": "Array<Float>", "__value": [192,80], "__tile": null, "defUid": 129, "realEditorValues": [ { "id": "V_Float", "params": [192] }, { "id": "V_Float", "params": [80] } ] },
+								{ "__identifier": "target_location", "__type": "Array<Float>", "__value": [200,80], "__tile": null, "defUid": 129, "realEditorValues": [ { "id": "V_Float", "params": [200] }, { "id": "V_Float", "params": [80] } ] },
 								{ "__identifier": "target_level", "__type": "String", "__value": "Level_1", "__tile": null, "defUid": 130, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["Level_1"]
 								}] }
 							],
-							"__worldX": 184,
+							"__worldX": 190,
 							"__worldY": 80
 						}
 					]
@@ -596,8 +596,6 @@
 						{ "px": [176,72], "src": [8,88], "f": 0, "t": 221, "d": [238], "a": 1 },
 						{ "px": [184,72], "src": [8,88], "f": 0, "t": 221, "d": [239], "a": 1 },
 						{ "px": [0,80], "src": [32,80], "f": 0, "t": 204, "d": [240], "a": 1 },
-						{ "px": [184,80], "src": [88,56], "f": 0, "t": 151, "d": [263], "a": 1 },
-						{ "px": [184,80], "src": [16,56], "f": 0, "t": 142, "d": [263], "a": 1 },
 						{ "px": [0,88], "src": [32,80], "f": 0, "t": 204, "d": [264], "a": 1 },
 						{ "px": [8,88], "src": [16,56], "f": 0, "t": 142, "d": [265], "a": 1 },
 						{ "px": [144,88], "src": [0,72], "f": 0, "t": 180, "d": [282], "a": 1 },
@@ -736,12 +734,12 @@
 							"__tile": null,
 							"__smartColor": "#C28569",
 							"iid": "6d1a7a70-bde0-11f1-bcac-0585cd46f9e6",
-							"width": 8,
+							"width": 2,
 							"height": 8,
 							"defUid": 120,
 							"px": [0,16],
 							"fieldInstances": [
-								{ "__identifier": "target_location", "__type": "Array<Float>", "__value": [184,80], "__tile": null, "defUid": 129, "realEditorValues": [ { "id": "V_Float", "params": [184] }, { "id": "V_Float", "params": [80] } ] },
+								{ "__identifier": "target_location", "__type": "Array<Float>", "__value": [176,80], "__tile": null, "defUid": 129, "realEditorValues": [ { "id": "V_Float", "params": [176] }, { "id": "V_Float", "params": [80] } ] },
 								{ "__identifier": "target_level", "__type": "String", "__value": "Level_0", "__tile": null, "defUid": 130, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["Level_0"]
@@ -799,7 +797,6 @@
 						{ "px": [40,8], "src": [8,88], "f": 0, "t": 221, "d": [37], "a": 1 },
 						{ "px": [48,8], "src": [8,88], "f": 0, "t": 221, "d": [38], "a": 1 },
 						{ "px": [56,8], "src": [8,88], "f": 0, "t": 221, "d": [39], "a": 1 },
-						{ "px": [0,16], "src": [88,56], "f": 0, "t": 151, "d": [64], "a": 1 },
 						{ "px": [0,24], "src": [16,72], "f": 0, "t": 182, "d": [96], "a": 1 },
 						{ "px": [0,32], "src": [16,80], "f": 0, "t": 202, "d": [128], "a": 1 },
 						{ "px": [8,32], "src": [16,56], "f": 0, "t": 142, "d": [129], "a": 1 },
