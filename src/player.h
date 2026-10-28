@@ -14,6 +14,7 @@ struct Player {
         float walk_speed;
 
         Vector2 pos = {0.0f, 0.0f};
+        Vector2 last_entry = {0.0f, 0.0f};
         Vector2 vel = {0.0f, 0.0f};
 
         bool grounded = true;

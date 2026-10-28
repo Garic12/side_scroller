@@ -108,7 +108,7 @@ int main() {
                             player.pos.x = (x + 1) * TILESIZE;
                         }
                     } else if (collision_id == 2) {
-                        player.pos = world.current_level->player_start;
+                        player.pos = player.last_entry;
                     }
                 }
             }
@@ -140,22 +140,6 @@ int main() {
             }
         }
 
-        // Check walking through door, maybe do this more efficient someday
-        Rectangle player_rect = {player.pos.x, player.pos.y, TILESIZE,
-                                 TILESIZE};
-        for (const Door &door : world.current_level->doors) {
-            if (CheckCollisionRecs(player_rect, door.hitbox)) {
-                for (Level &new_level : world.levels) {
-                    if (door.target_level == new_level.id) {
-                        world.current_level = &new_level;
-                        player.pos = door.target_pos;
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-
         float dy = player.vel.y * dt;
         if (dy != 0) {
             player.pos.y += dy;
@@ -175,9 +159,26 @@ int main() {
                         }
                         player.vel.y = 0.0f;
                     } else if (collision_id == 2) {
-                        player.pos = world.current_level->player_start;
+                        player.pos = player.last_entry;
                     }
                 }
+            }
+        }
+
+        // Check walking through door, maybe do this more efficient someday
+        Rectangle player_rect = {player.pos.x, player.pos.y, TILESIZE,
+                                 TILESIZE};
+        for (const Door &door : world.current_level->doors) {
+            if (CheckCollisionRecs(player_rect, door.hitbox)) {
+                for (Level &new_level : world.levels) {
+                    if (door.target_level == new_level.id) {
+                        world.current_level = &new_level;
+                        player.pos = door.target_pos;
+                        player.last_entry = door.target_pos;
+                        break;
+                    }
+                }
+                break;
             }
         }
 

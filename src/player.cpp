@@ -19,7 +19,8 @@ int SetupPlayer(Player *player, Level *level) {
 
     player->walk_speed = 45.0f;
 
-    player->pos = {level->player_start.x, level->player_start.y};
+    player->pos = level->player_start;
+    player->last_entry = level->player_start;
 
     return 0;
 }
