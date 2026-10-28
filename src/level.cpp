@@ -23,15 +23,16 @@ Level LoadLevel(const nlohmann::json &data) {
                 if (entity_id == "PlayerStart") {
                     const float x = entity["px"][0].get<float>();
                     const float y = entity["px"][1].get<float>();
-                    level.player_start = {x, y};
+                    level.player_start = {level.world_pos.x + x,
+                                          level.world_pos.y + y};
 
                 } else if (entity_id == "Door") {
                     Door door;
 
                     Vector2 pos = {entity["__worldX"].get<float>(),
                                    entity["__worldY"].get<float>()};
-                    Vector2 size = {entity["__width"].get<float>(),
-                                    entity["__height"].get<float>()};
+                    Vector2 size = {entity["width"].get<float>(),
+                                    entity["height"].get<float>()};
                     door.hitbox = {pos.x, pos.y, size.x, size.y};
 
                     // Get target location of door
@@ -39,6 +40,7 @@ Level LoadLevel(const nlohmann::json &data) {
                         entity["fieldInstances"][0]["__value"][0].get<float>();
                     const float target_y =
                         entity["fieldInstances"][0]["__value"][1].get<float>();
+                    door.target_pos = {target_x, target_y};
 
                     // Get target level name
                     door.target_level = entity["fieldInstances"][1]["__value"]
@@ -53,7 +55,8 @@ Level LoadLevel(const nlohmann::json &data) {
 
             for (const auto &tile : grid_tiles) {
                 level.tiles.push_back(
-                    {.world_pos = {tile["px"][0], tile["px"][1]},
+                    {.world_pos = {level.world_pos.x + tile["px"][0].get<float>(),
+                                   level.world_pos.y + tile["px"][1].get<float>()},
                      .src_pos = {tile["src"][0], tile["src"][1]}});
             }
         } else if (type == "IntGrid") {
@@ -83,6 +86,9 @@ TileBounds GetTileBounds(Vector2 pos) {
 }
 
 bool IsSolid(const Level *level, int x, int y) {
+    // x, y are world tile coords, convert to level-local grid coords
+    x -= (int)(level->world_pos.x / TILESIZE);
+    y -= (int)(level->world_pos.y / TILESIZE);
     if (x < 0 || x >= level->collision_width || y < 0 ||
         y >= level->collision_height)
         return false;

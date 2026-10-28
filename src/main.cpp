@@ -66,7 +66,6 @@ int main() {
         world.levels.push_back(LoadLevel(level));
     }
     world.current_level = &world.levels[0];
-    Level *level = world.current_level;
 
     Player player;
     if (SetupPlayer(&player, world.current_level) != 0) {
@@ -81,12 +80,6 @@ int main() {
                     .zoom = 5.0f};
     const float half_view_x = screenWidth / (2.0f * cam.zoom);
     const float half_view_y = screenHeight / (2.0f * cam.zoom);
-
-    // Gameplay runs in level-local space (0,0 = top-left of current level)
-    const float level_left = 0.0f;
-    const float level_right = level->world_size.x;
-    const float level_top = 0.0f;
-    const float level_bottom = level->world_size.y;
 
     // --- Game Loop ---
     while (!WindowShouldClose()) {
@@ -105,7 +98,7 @@ int main() {
             for (int y = bounds.top; y <= bounds.bottom; ++y) {
                 for (int x = bounds.left; x <= bounds.right; ++x) {
                     // Check grid bounds
-                    if (IsSolid(level, x, y)) {
+                    if (IsSolid(world.current_level, x, y)) {
                         player.touches_wall = true;
                         if (dx > 0) {
                             player.pos.x = x * TILESIZE - TILESIZE;
@@ -143,6 +136,22 @@ int main() {
             }
         }
 
+        // Check walking through door, maybe do this more efficient someday
+        Rectangle player_rect = {player.pos.x, player.pos.y, TILESIZE,
+                                 TILESIZE};
+        for (const Door &door : world.current_level->doors) {
+            if (CheckCollisionRecs(player_rect, door.hitbox)) {
+                for (Level &new_level : world.levels) {
+                    if (door.target_level == new_level.id) {
+                        world.current_level = &new_level;
+                        player.pos = door.target_pos;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+
         float dy = player.vel.y * dt;
         if (dy != 0) {
             player.pos.y += dy;
@@ -151,7 +160,7 @@ int main() {
             for (int y = bounds.top; y <= bounds.bottom; ++y) {
                 for (int x = bounds.left; x <= bounds.right; ++x) {
                     // Check grid bounds
-                    if (IsSolid(level, x, y)) {
+                    if (IsSolid(world.current_level, x, y)) {
                         if (dy > 0) {
                             player.pos.y = y * TILESIZE - TILESIZE;
                             player.grounded = true;
@@ -166,19 +175,23 @@ int main() {
 
         // Move and Clamp Camera
         cam.target.x =
-            Clamp(player.pos.x + TILESIZE / 2.0f, level_left + half_view_x,
-                  level_right - half_view_x);
+            Clamp(player.pos.x + TILESIZE / 2.0f,
+                  world.current_level->world_pos.x + half_view_x,
+                  world.current_level->world_pos.x +
+                      world.current_level->world_size.x - half_view_x);
         cam.target.y =
-            Clamp(player.pos.y + TILESIZE / 2.0f, level_top + half_view_y,
-                  level_bottom - half_view_y);
+            Clamp(player.pos.y + TILESIZE / 2.0f,
+                  world.current_level->world_pos.y + half_view_y,
+                  world.current_level->world_pos.y +
+                      world.current_level->world_size.y - half_view_y);
 
         BeginDrawing();
         ClearBackground({40, 40, 46});
 
         BeginMode2D(cam);
         // Draw Map
-        for (int i = 0; i < level->tiles.size(); ++i) {
-            Tile tile = level->tiles[i];
+        for (int i = 0; i < world.current_level->tiles.size(); ++i) {
+            Tile tile = world.current_level->tiles[i];
             Rectangle src = {.x = tile.src_pos.x,
                              .y = tile.src_pos.y,
                              .width = TILESIZE,
@@ -203,15 +216,13 @@ int main() {
             rlImGuiBegin();
 
             ImGui::Begin("Debug");
-            // ImGui::Text("FPS: %d", GetFPS());
+            ImGui::Text("Current Level: %s", (world.current_level->id).c_str());
             ImGui::DragFloat2("Player pos", &player.pos.x);
+            ImGui::DragFloat2("Level Root", &world.current_level->world_pos.x);
+            ImGui::DragFloat2("Level Size", &world.current_level->world_size.x);
             // ImGui::Checkbox("Grounded", &player.grounded);
             ImGui::Separator();
             // ImGui::DragFloat("Walk speed", &player.walk_speed, 1.0f);
-            ImGui::Text("Level: Left: %.1f, Right: %.1f", level_left,
-                        level_right);
-            ImGui::Text("Level: Top: %.1f, Bottom: %.1f", level_top,
-                        level_bottom);
             ImGui::End();
 
             // ImGui::ShowDemoWindow(); // shows every available widget, handy
@@ -221,10 +232,6 @@ int main() {
         }
         EndDrawing();
     }
-    // Cleanup
-    level->tiles.clear();
-    level->collision_grid.clear();
-    UnloadTexture(texture);
 
     rlImGuiShutdown();
     CloseWindow();
