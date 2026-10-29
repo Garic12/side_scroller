@@ -33,6 +33,17 @@ jobs:
         with:
           arch: x64
 
+      # The code uses designated initializers (e.g. Rectangle{ .x = 1 }).
+      # GCC accepts them in C++17 as an extension, but MSVC requires C++20.
+      # Better long-term fix: change CMAKE_CXX_STANDARD to 20 in CMakeLists.txt,
+      # after which this step can be deleted.
+      - name: Use C++20 for MSVC
+        shell: pwsh
+        run: |
+          (Get-Content CMakeLists.txt) `
+            -replace 'set\(CMAKE_CXX_STANDARD 17\)', 'set(CMAKE_CXX_STANDARD 20)' |
+            Set-Content CMakeLists.txt
+
       - name: Configure
         shell: pwsh
         # MultiThreaded = static MSVC runtime (/MT), so the exe runs on
