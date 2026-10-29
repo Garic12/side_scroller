@@ -31,7 +31,7 @@ Vector2 Perpendicular(Vector2 v) { return {-v.y, v.x}; }
 
 Vector2 ProjectionMinMax(const Vector2 axis, const Vector2 *points, int size) {
     float min = FLT_MAX;
-    float max = FLT_MIN;
+    float max = -FLT_MAX;
 
     for (int i = 0; i < size; i++) {
         float projection = Vector2DotProduct(points[i], axis);
@@ -62,12 +62,11 @@ bool CollisionRectSpike(const Rectangle &rect, const Spike &spike) {
                                {rect.x + rect.width, rect.y + rect.height}};
     Vector2 corners_spike[3] = {spike.a, spike.b, spike.c};
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         Vector2 minmax_rect = ProjectionMinMax(axes[i], corners_rect, 4);
         Vector2 minmax_spike = ProjectionMinMax(axes[i], corners_spike, 3);
 
-        if (!(minmax_rect.y >= minmax_spike.x &&
-              minmax_spike.y >= minmax_rect.x)) {
+        if (minmax_rect.y < minmax_spike.x || minmax_spike.y < minmax_rect.x) {
             return false;
         }
     }
@@ -234,6 +233,17 @@ int main() {
             }
         }
 
+        // Check spike collision
+        bool collision;
+        for (const Spike &spike : world.current_level->spikes) {
+            if (CollisionRectSpike(GetPlayerHurtbox(player), spike)) {
+                player.pos = player.last_entry;
+                collision = true;
+            } else {
+                collision = false;
+            }
+        }
+
         // Move and Clamp Camera
         cam.target.x =
             Clamp(player.pos.x + TILESIZE / 2.0f,
@@ -282,7 +292,7 @@ int main() {
             ImGui::DragFloat2("Player pos", &player.pos.x);
             ImGui::DragFloat2("Level Root", &world.current_level->world_pos.x);
             ImGui::DragFloat2("Level Size", &world.current_level->world_size.x);
-            // ImGui::Checkbox("Grounded", &player.grounded);
+            ImGui::Checkbox("Collision", &collision);
             ImGui::Separator();
             // ImGui::DragFloat("Walk speed", &player.walk_speed, 1.0f);
             ImGui::End();

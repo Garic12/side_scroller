@@ -1,6 +1,7 @@
 #include "level.h"
 #include "globals.h"
 #include "raylib.h"
+#include <cstdio>
 
 Level LoadLevel(const nlohmann::json &data) {
     Level level;
@@ -52,8 +53,9 @@ Level LoadLevel(const nlohmann::json &data) {
                                          entity["__worldY"].get<float>()};
                     Spike spike;
                     spike.a = {spike_pos.x + 1, spike_pos.y + 7};
-                    spike.a = {spike_pos.x + 4, spike_pos.y + 1};
-                    spike.a = {spike_pos.x + 7, spike_pos.y + 7};
+                    spike.b = {spike_pos.x + 4, spike_pos.y + 1};
+                    spike.c = {spike_pos.x + 7, spike_pos.y + 7};
+                    printf("%.2f, %.2f\n", spike.a.x, spike.a.y);
 
                     level.spikes.push_back(spike);
                 }
