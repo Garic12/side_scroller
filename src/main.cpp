@@ -186,12 +186,19 @@ int main() {
                 player.grounded = false;
             } else if ((player.touches_wall ||
                         player.wall_coyote_timer > 0.0f)) {
-                player.vel.y = -player.jump_velocity;
+                if (player.wall_cooldown_timer <= 0.0f) {
+                    player.vel.y = -player.jump_velocity;
+                    player.wall_cooldown_timer = player.wall_cooldown_time;
+                }
             }
         }
+        if (player.wall_cooldown_timer > 0.0f) {
+            player.wall_cooldown_timer -= dt;
+        }
 
-        float dy = player.vel.y * dt;
-        if (dy != 0) {
+        bool has_gravity = true;
+        if (has_gravity) {
+            float dy = player.vel.y * dt;
             player.pos.y += dy;
             const Rectangle hitbox = GetPlayerHitbox(player);
             const TileBounds bounds = GetTileBounds(hitbox);
@@ -205,12 +212,28 @@ int main() {
                         if (dy > 0.0f) {
                             player.pos.y = y * TILESIZE - player.body.offset.y -
                                            player.body.size.y;
+                            player.vel = Vector2Zero();
                             player.grounded = true;
                         } else if (dy < 0.0f) {
                             player.pos.y =
                                 (y + 1) * TILESIZE - player.body.offset.y;
                         }
                         player.vel.y = 0.0f;
+                    } else if (collision_id == 2) {
+                        if (dy > 0.0f) {
+                            const float previous_bottom =
+                                player.pos.y - dy + TILESIZE;
+
+                            const float tile_top = y * TILESIZE;
+
+                            if (previous_bottom <= tile_top) {
+                                player.pos.y = y * TILESIZE -
+                                               player.body.offset.y -
+                                               player.body.size.y;
+                                player.vel = Vector2Zero();
+                                player.grounded = true;
+                            }
+                        }
                     }
                 }
             }
@@ -290,15 +313,13 @@ int main() {
             ImGui::Text("Frametime: %.3f ms", GetFrameTime() * 1000.0f);
             ImGui::Text("Current Level: %s", (world.current_level->id).c_str());
             ImGui::DragFloat2("Player pos", &player.pos.x);
-            ImGui::DragFloat2("Level Root", &world.current_level->world_pos.x);
-            ImGui::DragFloat2("Level Size", &world.current_level->world_size.x);
-            ImGui::Checkbox("Collision", &collision);
+            ImGui::Text("Walljump Cooldown: %.1f", player.wall_cooldown_timer);
             ImGui::Separator();
             // ImGui::DragFloat("Walk speed", &player.walk_speed, 1.0f);
             ImGui::End();
 
-            // ImGui::ShowDemoWindow(); // shows every available widget, handy
-            // as a reference
+            // ImGui::ShowDemoWindow(); // shows every available widget,
+            // handy as a reference
 
             rlImGuiEnd();
         }

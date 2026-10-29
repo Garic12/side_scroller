@@ -29,6 +29,9 @@ struct Player {
 
         float wall_coyote_timer;
         float wall_coyote_time;
+
+        float wall_cooldown_timer;
+        float wall_cooldown_time;
 };
 
 int SetupPlayer(Player *player, Level *level);
