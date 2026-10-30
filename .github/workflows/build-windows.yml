@@ -1,0 +1,89 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to attach the zip to a GitHub Release on tags
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Cache the FetchContent downloads (raylib, imgui, rlImGui, json) so
+      # rebuilds don't re-clone everything.
+      - name: Cache CMake dependencies
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: deps-${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
+
+      # Sets up the MSVC compiler environment, whatever Visual Studio
+      # version the runner image currently ships.
+      - name: Set up MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      # The code uses designated initializers (e.g. Rectangle{ .x = 1 }).
+      # GCC accepts them in C++17 as an extension, but MSVC requires C++20.
+      # Better long-term fix: change CMAKE_CXX_STANDARD to 20 in CMakeLists.txt,
+      # after which this step can be deleted.
+      - name: Use C++20 for MSVC
+        shell: pwsh
+        run: |
+          (Get-Content CMakeLists.txt) `
+            -replace 'set\(CMAKE_CXX_STANDARD 17\)', 'set(CMAKE_CXX_STANDARD 20)' |
+            Set-Content CMakeLists.txt
+
+      - name: Configure
+        shell: pwsh
+        # MultiThreaded = static MSVC runtime (/MT), so the exe runs on
+        # machines without the Visual C++ Redistributable installed.
+        run: >
+          cmake -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $dist = "dist/Sidescroller"
+          New-Item -ItemType Directory -Force -Path $dist | Out-Null
+
+          Copy-Item "build/Sidescroller.exe" $dist
+
+          # The game loads assets relative to its working directory,
+          # so ship them next to the exe.
+          if (Test-Path "ressources") {
+            Copy-Item "ressources" "$dist/ressources" -Recurse
+          }
+          if (Test-Path "imgui.ini") {
+            Copy-Item "imgui.ini" $dist
+          }
+
+          Compress-Archive -Path "$dist/*" -DestinationPath "Sidescroller-windows.zip" -Force
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sidescroller-windows
+          path: Sidescroller-windows.zip
+          if-no-files-found: error
+
+      - name: Attach to GitHub Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Sidescroller-windows.zip
