@@ -25,6 +25,8 @@ int SetupPlayer(Player *player, Level *level) {
     player->pos = level->player_start;
     player->last_entry = level->player_start;
 
+    player->has_key = false;
+
     return 0;
 }
 

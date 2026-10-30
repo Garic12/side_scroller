@@ -26,6 +26,7 @@ struct Player {
         Hitbox hurtbox = {{1.0f, 2.0f}, {5.0f, 4.0f}};
         bool grounded = true;
         bool touches_wall;
+        bool has_key;
 
         float wall_coyote_timer;
         float wall_coyote_time;

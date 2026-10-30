@@ -74,7 +74,7 @@ bool CollisionRectSpike(const Rectangle &rect, const Spike &spike) {
 }
 
 int main() {
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     InitWindow(screenWidth, screenHeight, "Sidescroller");
     SetTargetFPS(60);
@@ -123,9 +123,7 @@ int main() {
     Camera2D cam = {.offset = {screenWidth / 2.0f, screenHeight / 2.0f},
                     .target = player.pos,
                     .rotation = 0.0,
-                    .zoom = 5.0f};
-    const float half_view_x = screenWidth / (2.0f * cam.zoom);
-    const float half_view_y = screenHeight / (2.0f * cam.zoom);
+                    .zoom = 7.0f};
 
     // --- Game Loop ---
     while (!WindowShouldClose()) {
@@ -240,19 +238,21 @@ int main() {
         }
 
         // Check walking through door, maybe do this more efficient someday
-        Rectangle player_rect = {player.pos.x, player.pos.y, TILESIZE,
-                                 TILESIZE};
-        for (const Door &door : world.current_level->doors) {
-            if (CheckCollisionRecs(player_rect, door.hitbox)) {
-                for (Level &new_level : world.levels) {
-                    if (door.target_level == new_level.id) {
-                        world.current_level = &new_level;
-                        player.pos = door.target_pos;
-                        player.last_entry = door.target_pos;
-                        break;
+        if (player.has_key) {
+            Rectangle player_rect = {player.pos.x, player.pos.y, TILESIZE,
+                                     TILESIZE};
+            for (const Door &door : world.current_level->doors) {
+                if (CheckCollisionRecs(player_rect, door.hitbox)) {
+                    for (Level &new_level : world.levels) {
+                        if (door.target_level == new_level.id) {
+                            world.current_level = &new_level;
+                            player.pos = door.target_pos;
+                            player.last_entry = door.target_pos;
+                            break;
+                        }
                     }
+                    break;
                 }
-                break;
             }
         }
 
@@ -267,42 +267,89 @@ int main() {
             }
         }
 
+        // Check key related collision
+        if (!player.has_key) {
+            Rectangle key_rect = {world.current_level->key.x,
+                                  world.current_level->key.y + 4.0f, 8.0f,
+                                  3.0f};
+            if (CheckCollisionRecs(GetPlayerHitbox(player), key_rect)) {
+                player.has_key = true;
+            }
+        }
+
         // Move and Clamp Camera
-        cam.target.x =
-            Clamp(player.pos.x + TILESIZE / 2.0f,
-                  world.current_level->world_pos.x + half_view_x,
-                  world.current_level->world_pos.x +
-                      world.current_level->world_size.x - half_view_x);
-        cam.target.y =
-            Clamp(player.pos.y + TILESIZE / 2.0f,
-                  world.current_level->world_pos.y + half_view_y,
-                  world.current_level->world_pos.y +
-                      world.current_level->world_size.y - half_view_y);
+        float half_view_x = screenWidth / (2.0f * cam.zoom);
+        float half_view_y = screenHeight / (2.0f * cam.zoom);
+        float camera_width = screenWidth / cam.zoom;
+        float camera_height = screenHeight / cam.zoom;
+
+        if (world.current_level->collision_width * TILESIZE < camera_width) {
+            cam.target.x =
+                world.current_level->world_pos.x +
+                (world.current_level->collision_width * TILESIZE / 2.0f);
+        } else {
+            cam.target.x =
+                Clamp(player.pos.x + TILESIZE / 2.0f,
+                      world.current_level->world_pos.x + half_view_x,
+                      world.current_level->world_pos.x +
+                          world.current_level->world_size.x - half_view_x);
+        }
+        if (world.current_level->collision_height * TILESIZE < camera_height) {
+            cam.target.y =
+                world.current_level->world_pos.y +
+                (world.current_level->collision_height * TILESIZE / 2.0f);
+        } else {
+            cam.target.y =
+                Clamp(player.pos.y + TILESIZE / 2.0f,
+                      world.current_level->world_pos.y + half_view_y,
+                      world.current_level->world_pos.y +
+                          world.current_level->world_size.y - half_view_y);
+        }
 
         BeginDrawing();
         ClearBackground({40, 40, 46});
 
         BeginMode2D(cam);
-        // Draw Map
+        // local Rectangles we use for drawing
+        Rectangle src = {0.0f, 0.0f, TILESIZE, TILESIZE};
+        Rectangle dest = {0.0f, 0.0f, TILESIZE, TILESIZE};
+
         for (int i = 0; i < world.current_level->tiles.size(); ++i) {
             Tile tile = world.current_level->tiles[i];
-            Rectangle src = {.x = tile.src_pos.x,
-                             .y = tile.src_pos.y,
-                             .width = TILESIZE,
-                             .height = TILESIZE};
-            Rectangle dest = {.x = tile.world_pos.x,
-                              .y = tile.world_pos.y,
-                              .width = TILESIZE,
-                              .height = TILESIZE};
+
+            src.x = tile.src_pos.x;
+            src.y = tile.src_pos.y;
+            dest.x = tile.world_pos.x;
+            dest.y = tile.world_pos.y;
+            DrawTexturePro(texture, src, dest, {0, 0}, 0.0f, WHITE);
+        }
+
+        // Draw door and key
+        if (player.has_key) {
+            src.x = 88.0f;
+            src.y = 56.0f;
+            dest.x = world.current_level->doors[0].hitbox.x;
+            dest.y = world.current_level->doors[0].hitbox.y;
+            DrawTexturePro(texture, src, dest, {0, 0}, 0.0f, WHITE);
+        } else {
+            src.x = 80.0f;
+            src.y = 56.0f;
+            dest.x = world.current_level->doors[0].hitbox.x;
+            dest.y = world.current_level->doors[0].hitbox.y;
+            DrawTexturePro(texture, src, dest, {0, 0}, 0.0f, WHITE);
+
+            src.x = 48.0f;
+            src.y = 40.0f;
+            dest.x = world.current_level->key.x;
+            dest.y = world.current_level->key.y;
             DrawTexturePro(texture, src, dest, {0, 0}, 0.0f, WHITE);
         }
 
         // Draw Player
-        Rectangle src = {.x = 0, .y = 0, .width = TILESIZE, .height = TILESIZE};
-        Rectangle dest = {.x = player.pos.x,
-                          .y = player.pos.y,
-                          .width = TILESIZE,
-                          .height = TILESIZE};
+        src.x = 0.0f;
+        src.y = 0.0f;
+        dest.x = player.pos.x;
+        dest.y = player.pos.y;
         DrawTexturePro(texture, src, dest, {0, 0}, 0.0f, WHITE);
         EndMode2D();
 

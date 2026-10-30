@@ -58,6 +58,9 @@ Level LoadLevel(const nlohmann::json &data) {
                     printf("%.2f, %.2f\n", spike.a.x, spike.a.y);
 
                     level.spikes.push_back(spike);
+                } else if (entity_id == "Key") {
+                    level.key = {entity["__worldX"].get<float>(),
+                                 entity["__worldY"].get<float>()};
                 }
             }
         } else if (type == "Tiles") {
